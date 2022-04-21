@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/index.css">
+  <script src="./js/data.js" defer></script>
+  <script src="./js/ultilities.js" defer></script>
+  <script src="./js/callbacks.js" defer></script>
+  <script src="./js/selectorsAndEvents.js" defer></script>
+  <script src="./js/player.js" defer></script>
+  <script src="./js/footer.js" defer></script>
+  <script src="./js/index.js" defer></script>
+  <title>Mr Music Player</title>
+</head>
+<body>
+  <section class="c-player">
+    <header class="c-header">
+      <div class="c-header__title" data-title>
+        <div class="c--flex" data-search>
+          <img src="./src/icons/header_search.webp" alt="search" />
+        </div>
+        <h1>Mr Music Player</h1>
+    	  <div class="c--flex" data-settings>
+          <img src="./src/icons/header_settings.webp" alt="conf" />
+    	  </div>
+    	</div>
+      
+      <!-- COVER LOGO -->
+      <div class="c-header__cover">
+        <img src="./src/icons/player.webp" alt="" />
+      </div>
+
+      <!-- SEEKBAR -->
+      <div class="c-header__seekbar">
+        <p data-duration="current">
+          00:00
+        </p>
+        <input data-seekbar type="range" value="0" min="0" max="100" step="1" />
+        <p data-duration="total">
+          00:00
+        </p>
+      </div>
+
+      <!-- NAME MUSICS -->
+      <h2 class="c-header__artist nowrap" data-artist>...</h2>
+
+      <!-- CONTROLS -->
+      <ul class="c-header__controls" data-controls>
+        <li data-controls_card="repeat">
+          <img src="./src/icons/repeat.webp" />
+        </li>
+        <li data-controls_card="previous">
+          <img src="./src/icons/previous.webp" />
+        </li>
+        <li data-controls_card="play">
+          <img src="./src/icons/play.webp" />
+        </li>
+        <li data-controls_card="next">
+          <img src="./src/icons/next.webp" />
+        </li>
+        <li data-controls_card="random">
+          <img src="./src/icons/random.webp" />
+        </li>
+      </ul>
+    </header>
+
+    <!-- MAIN -->
+    <main class="c-main" data-main>
+      <div class="c-main__slider" data-main_slider><span></span></div>
+      <div class="c-main__total_times">
+        <img src="./src/icons/time.png" alt="Total_Times" />
+        <p data-total_times>...</p>
+      </div>
+      <ul class="c-main__musics" data-musics></ul>
+    </main>
+  </section>
+  
+</body>
+</html>

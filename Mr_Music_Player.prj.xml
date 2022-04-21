@@ -1,0 +1,335 @@
+<TaskerData sr="" dvi="1" tv="6.0.4-beta">
+	<dmetric>1080.0,1920.0</dmetric>
+	<Project sr="proj0" ve="2">
+		<cdate>1640374185938</cdate>
+		<name>Mr Music Player</name>
+		<scenes>MRAP - Player</scenes>
+		<tids>5,42,681</tids>
+		<ProfileVariable sr="pv0">
+			<clearout>false</clearout>
+			<exportval>0</exportval>
+			<immutable>false</immutable>
+			<pvci>false</pvci>
+			<pvd></pvd>
+			<pvdn></pvdn>
+			<pvid>98</pvid>
+			<pvit>pj</pvit>
+			<pvn>%cont_exit</pvn>
+			<pvt>n</pvt>
+			<pvv>0</pvv>
+			<strout>false</strout>
+		</ProfileVariable>
+	</Project>
+	<Scene sr="sceneMRAP - Player">
+		<cdate>1640650492898</cdate>
+		<edate>1650524678647</edate>
+		<heightLand>-1</heightLand>
+		<heightPort>1920</heightPort>
+		<nme>MRAP - Player</nme>
+		<widthLand>-1</widthLand>
+		<widthPort>1080</widthPort>
+		<WebElement sr="elements0" ve="2">
+			<flags>6</flags>
+			<geom>0,0,1080,1920,-1,-1,-1,-1</geom>
+			<pageloadedTask>681</pageloadedTask>
+			<Str sr="arg0" ve="3">Player</Str>
+			<Int sr="arg1" val="2"/>
+			<Str sr="arg2" ve="3">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;link rel="stylesheet" href="%path/css/index.css"&gt;
+  &lt;script src="%path/js/data.js" defer&gt;&lt;/script&gt;
+  &lt;script src="%path/js/ultilities.js" defer&gt;&lt;/script&gt;
+  &lt;script src="%path/js/callbacks.js" defer&gt;&lt;/script&gt;
+  &lt;script src="%path/js/selectorsAndEvents.js" defer&gt;&lt;/script&gt;
+  &lt;script src="%path/js/player.js" defer&gt;&lt;/script&gt;
+  &lt;script src="%path/js/footer.js" defer&gt;&lt;/script&gt;
+  &lt;script src="%path/js/index.js" defer&gt;&lt;/script&gt;
+  &lt;title&gt;Mr Music Player&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;section class="c-player"&gt;
+    &lt;header class="c-header"&gt;
+      &lt;div class="c-header__title" data-title&gt;
+        &lt;div class="c--flex" data-search&gt;
+          &lt;img src="%path/src/icons/header_search.webp" alt="search" /&gt;
+        &lt;/div&gt;
+        &lt;h1&gt;Mr Music Player&lt;/h1&gt;
+    	  &lt;div class="c--flex" data-settings&gt;
+          &lt;img src="%path/src/icons/header_settings.webp" alt="conf" /&gt;
+    	  &lt;/div&gt;
+    	&lt;/div&gt;
+      
+      &lt;!-- COVER LOGO --&gt;
+      &lt;div class="c-header__cover"&gt;
+        &lt;img src="%path/src/icons/player.webp" alt="" /&gt;
+      &lt;/div&gt;
+
+      &lt;!-- SEEKBAR --&gt;
+      &lt;div class="c-header__seekbar"&gt;
+        &lt;p data-duration="current"&gt;
+          00:00
+        &lt;/p&gt;
+        &lt;input data-seekbar type="range" value="0" min="0" max="100" step="1" /&gt;
+        &lt;p data-duration="total"&gt;
+          00:00
+        &lt;/p&gt;
+      &lt;/div&gt;
+
+      &lt;!-- NAME MUSICS --&gt;
+      &lt;h2 class="c-header__artist nowrap" data-artist&gt;...&lt;/h2&gt;
+
+      &lt;!-- CONTROLS --&gt;
+      &lt;ul class="c-header__controls" data-controls&gt;
+        &lt;li data-controls_card="repeat"&gt;
+          &lt;img src="%path/src/icons/repeat.webp" /&gt;
+        &lt;/li&gt;
+        &lt;li data-controls_card="previous"&gt;
+          &lt;img src="%path/src/icons/previous.webp" /&gt;
+        &lt;/li&gt;
+        &lt;li data-controls_card="play"&gt;
+          &lt;img src="%path/src/icons/play.webp" /&gt;
+        &lt;/li&gt;
+        &lt;li data-controls_card="next"&gt;
+          &lt;img src="%path/src/icons/next.webp" /&gt;
+        &lt;/li&gt;
+        &lt;li data-controls_card="random"&gt;
+          &lt;img src="%path/src/icons/random.webp" /&gt;
+        &lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/header&gt;
+
+    &lt;!-- MAIN --&gt;
+    &lt;main class="c-main" data-main&gt;
+      &lt;div class="c-main__slider" data-main_slider&gt;&lt;span&gt;&lt;/span&gt;&lt;/div&gt;
+      &lt;div class="c-main__total_times"&gt;
+        &lt;img src="%path/src/icons/time.png" alt="Total_Times" /&gt;
+        &lt;p data-total_times&gt;...&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;ul class="c-main__musics" data-musics&gt;&lt;/ul&gt;
+    &lt;/main&gt;
+  &lt;/section&gt;
+
+
+&lt;script&gt;
+      const tasker = {
+      path: `%path`,
+      musicsPath: `%musics_path`,
+
+      setLocalVar(name, value) {
+        setLocal(name, value);
+      },
+      getLocal(variable) {
+        return local(variable)
+      },
+      async runTask(task, key, value) {
+        performTask(task, 1, key, value);
+      },
+      checkRunningTask(task) {
+        const re = new RegExp(task);
+        return re.test(global('TRUN'))
+      },
+      async actionsShell(code) {
+        const output = await shell(`${code}`, false);
+        return output;
+      },
+      toggleProfile(name, status) {
+        enableProfile(name, status)
+      },
+
+    }
+&lt;/script&gt;
+  
+&lt;/body&gt;
+&lt;/html&gt;</Str>
+			<Int sr="arg3" val="1"/>
+			<Int sr="arg4" val="1"/>
+			<Int sr="arg5" val="1"/>
+			<Int sr="arg6" val="1"/>
+			<Int sr="arg7" val="1"/>
+			<RectElement sr="background">
+				<flags>4</flags>
+				<geom>-1,-1,-1,-1,-1,-1,-1,-1</geom>
+				<Str sr="arg0" ve="3"/>
+				<Int sr="arg1" val="0"/>
+				<Str sr="arg2" ve="3"/>
+				<Str sr="arg3" ve="3"/>
+				<Int sr="arg4" val="0"/>
+				<Str sr="arg5" ve="3">#FF000000</Str>
+				<Int sr="arg6" val="0"/>
+				<Int sr="arg7" val="0"/>
+			</RectElement>
+		</WebElement>
+		<PropertiesElement sr="props">
+			<keyTask>42</keyTask>
+			<Int sr="arg0" val="1"/>
+			<Int sr="arg1" val="0"/>
+			<Str sr="arg2" ve="3">#33FFFFFF</Str>
+			<Int sr="arg3" val="0"/>
+			<Str sr="arg4" ve="3">MRAP - Player</Str>
+			<Str sr="arg5" ve="3"/>
+			<Img sr="arg6" ve="2"/>
+			<Str sr="arg7" ve="3"/>
+			<LinkClickFilter sr="filter0">
+				<stopEvent>true</stopEvent>
+				<urlMatch>back/home</urlMatch>
+			</LinkClickFilter>
+		</PropertiesElement>
+	</Scene>
+	<Task sr="task42">
+		<cdate>1640650506797</cdate>
+		<edate>1640650506797</edate>
+		<id>42</id>
+		<pri>102</pri>
+		<Action sr="act0" ve="7">
+			<code>61</code>
+			<Int sr="arg0">
+				<var>20</var>
+			</Int>
+		</Action>
+		<Action sr="act1" ve="7">
+			<code>37</code>
+			<ConditionList sr="if">
+				<Condition sr="c0" ve="3">
+					<lhs>%cont_exit</lhs>
+					<op>2</op>
+					<rhs>0</rhs>
+				</Condition>
+			</ConditionList>
+		</Action>
+		<Action sr="act2" ve="7">
+			<code>547</code>
+			<Str sr="arg0" ve="3">%cont_exit</Str>
+			<Str sr="arg1" ve="3">1</Str>
+			<Int sr="arg2" val="0"/>
+			<Int sr="arg3" val="0"/>
+			<Int sr="arg4" val="0"/>
+			<Int sr="arg5" val="3"/>
+			<Int sr="arg6" val="1"/>
+		</Action>
+		<Action sr="act3" ve="7">
+			<code>53</code>
+			<Str sr="arg0" ve="3">MRAP - Player</Str>
+			<Str sr="arg1" ve="3">Player</Str>
+			<Int sr="arg2" val="6"/>
+			<Str sr="arg3" ve="3">javascript:player.exitSceneTasker()</Str>
+		</Action>
+		<Action sr="act4" ve="7">
+			<code>548</code>
+			<Str sr="arg0" ve="3">Aperte VOLTAR mais uma vez para fechar</Str>
+			<Int sr="arg1" val="0"/>
+			<Str sr="arg10" ve="3"/>
+			<Int sr="arg11" val="1"/>
+			<Int sr="arg12" val="0"/>
+			<Str sr="arg13" ve="3"/>
+			<Int sr="arg14" val="0"/>
+			<Int sr="arg2" val="0"/>
+			<Str sr="arg3" ve="3"/>
+			<Str sr="arg4" ve="3"/>
+			<Str sr="arg5" ve="3"/>
+			<Str sr="arg6" ve="3"/>
+			<Str sr="arg7" ve="3"/>
+			<Str sr="arg8" ve="3"/>
+			<Int sr="arg9" val="1"/>
+		</Action>
+		<Action sr="act5" ve="7">
+			<code>43</code>
+		</Action>
+		<Action sr="act6" ve="7">
+			<code>53</code>
+			<Str sr="arg0" ve="3">MRAP - Player</Str>
+			<Str sr="arg1" ve="3">Player</Str>
+			<Int sr="arg2" val="6"/>
+			<Str sr="arg3" ve="3">javascript:(() =&gt; player.audio.pause() )()</Str>
+		</Action>
+		<Action sr="act7" ve="7">
+			<code>49</code>
+			<Str sr="arg0" ve="3">MRAP - Player</Str>
+		</Action>
+		<Action sr="act8" ve="7">
+			<code>38</code>
+		</Action>
+	</Task>
+	<Task sr="task5">
+		<cdate>1640374222534</cdate>
+		<edate>1650520701455</edate>
+		<id>5</id>
+		<nme>MRAP 0 - BEGIN / INICIO</nme>
+		<pri>100</pri>
+		<Action sr="act0" ve="7">
+			<code>547</code>
+			<label>Caminho do projeto</label>
+			<Str sr="arg0" ve="3">%path</Str>
+			<Str sr="arg1" ve="3">/storage/0BF9-13F1/1 - Programação/1 - Projetos/Mr Music Player</Str>
+			<Int sr="arg2" val="0"/>
+			<Int sr="arg3" val="0"/>
+			<Int sr="arg4" val="0"/>
+			<Int sr="arg5" val="3"/>
+			<Int sr="arg6" val="1"/>
+		</Action>
+		<Action sr="act1" ve="7">
+			<code>547</code>
+			<label>Caminho da pasta onde listará as musicas</label>
+			<Str sr="arg0" ve="3">%musics_path</Str>
+			<Str sr="arg1" ve="3">/storage/0BF9-13F1/1 - Programação/1 - Projetos/Mr Music Player/src/musics</Str>
+			<Int sr="arg2" val="0"/>
+			<Int sr="arg3" val="0"/>
+			<Int sr="arg4" val="0"/>
+			<Int sr="arg5" val="3"/>
+			<Int sr="arg6" val="1"/>
+		</Action>
+		<Action sr="act2" ve="7">
+			<code>547</code>
+			<Str sr="arg0" ve="3">%cont_exit</Str>
+			<Str sr="arg1" ve="3">0</Str>
+			<Int sr="arg2" val="0"/>
+			<Int sr="arg3" val="0"/>
+			<Int sr="arg4" val="0"/>
+			<Int sr="arg5" val="3"/>
+			<Int sr="arg6" val="1"/>
+		</Action>
+		<Action sr="act3" ve="7">
+			<code>47</code>
+			<Str sr="arg0" ve="3">MRAP - Player</Str>
+			<Int sr="arg1" val="10"/>
+			<Int sr="arg10" val="0"/>
+			<Int sr="arg2" val="100"/>
+			<Int sr="arg3" val="100"/>
+			<Int sr="arg4" val="0"/>
+			<Int sr="arg5" val="0"/>
+			<Int sr="arg6" val="0"/>
+			<Int sr="arg7" val="1"/>
+			<Int sr="arg8" val="0"/>
+			<Int sr="arg9" val="0"/>
+		</Action>
+		<Img sr="icn" ve="2">
+			<nme>mw_av_musvideo</nme>
+		</Img>
+	</Task>
+	<Task sr="task681">
+		<cdate>1650322529476</cdate>
+		<edate>1650322529476</edate>
+		<id>681</id>
+		<pri>102</pri>
+		<Action sr="act0" ve="7">
+			<code>547</code>
+			<Str sr="arg0" ve="3">%script</Str>
+			<Str sr="arg1" ve="3">player.setContexts();
+player.start();</Str>
+			<Int sr="arg2" val="0"/>
+			<Int sr="arg3" val="0"/>
+			<Int sr="arg4" val="0"/>
+			<Int sr="arg5" val="3"/>
+			<Int sr="arg6" val="1"/>
+		</Action>
+		<Action sr="act1" ve="7">
+			<code>53</code>
+			<Str sr="arg0" ve="3">MRAP - Player</Str>
+			<Str sr="arg1" ve="3">Player</Str>
+			<Int sr="arg2" val="6"/>
+			<Str sr="arg3" ve="3">javascript:( () =&gt; { %script })()</Str>
+		</Action>
+	</Task>
+</TaskerData>
