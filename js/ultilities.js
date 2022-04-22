@@ -95,12 +95,12 @@ const ultilities = {
     this.updateTimeTotal = function(){
       this.totalTimesElem.textContent = audiosData.timeTotal
     }
-    this.renderCardsMusics = async function(data) {
-      this.musics.innerHTML = data.map( 
+    this.renderCardsMusics = async function(data, isSearch) {
+      const htmlCards = data.map( 
         ({id, name, duration, nReproduced }) => {
        const cardActive = this.currentPlaying == id
          return `
-          <li class="c-musics__card ${ cardActive ? 'active' : '' }" data-card="${id}">
+          <li class="c-musics__card ${ cardActive && !isSearch ? 'active' : '' }" data-card${isSearch ? "_search" : "" }="${id}">
             <div class="c-musics__card__icon">
               <img src="${this.path}/src/icons/music-black.png" loading="lazy" />
               <span>${ duration || "00:00" }</span>
@@ -111,8 +111,14 @@ const ultilities = {
             </div>
           </li>`
         }).join("")
+        
+        if(!isSearch) { 
+          this.musics.innerHTML = htmlCards
+          this.cardActive = document.querySelector(`[data-card="${this.currentPlaying}"]`)
+          return
+        }
+        this.musicsSearch.innerHTML = htmlCards
     
-        this.cardActive = document.querySelector(`[data-card="${this.currentPlaying}"]`)
     }
     this.calculateMusicsTimes = async () => {
       musicsTotal = audiosData.musics.length

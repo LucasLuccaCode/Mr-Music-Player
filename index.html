@@ -14,7 +14,23 @@
   <title>Mr Music Player</title>
 </head>
 <body>
-  <section class="c-player">
+  <section class="c-player" data-player>
+    <!-- SEARCH -->
+    <section class="c-search" data-search>
+      <form class="c-form" data-form_search method="get" accept-charset="utf-8">
+        <div class="c--flex" data-back_search>
+          <img src="./src/icons/left.webp" alt="" />  
+        </div>
+        <input data-input_search 
+          type="text" 
+          placeholder="Digite a musica para pesquisar" 
+          value="" 
+        />
+      </form>
+      <ul class="c-main__musics" data-musics_search></ul>
+    </section>
+    
+    <!-- HEADER -->
     <header class="c-header">
       <div class="c-header__title" data-title>
         <div class="c--flex" data-search>

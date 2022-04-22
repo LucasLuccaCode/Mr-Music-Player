@@ -4,11 +4,10 @@ const callbacks = {
     
     this.actionsTitle = ({ target: el }) => {
       const { key } = this.getDataSetAttributes(el)
-      console.log(key)
       
       const actions = {
         search: () => {
-          
+          this.toggleSearch()
         },
         settings: () => {
           this.removeStorage()
@@ -70,37 +69,20 @@ const callbacks = {
     this.toggleSearch = function() {
       const isVisible = this.c_search.className.includes("active")
       if (!isVisible) {
+        this.musicsSearch.innerHTML = ""
         this.c_search.classList.add("active")
-        this.pageMusics.scroll(0,0)
-        setTimeout(()=> this.search.focus(), 300)
+        this.inputSearch.focus()
       } else {
         this.c_search.classList.remove("active")
+        this.c_search.style.width = "0vw"
+        this.musicsSearch.innerHTML = ""
+        this.inputSearch.value = ""
       }
-    }
-    this.resetSearch = async function (){
-      this.toggleSearch()
-      if (this.search.value) {
-        setTimeout( () => {
-          this.search.value = ""
-          this.searchMusics({ target: this.search })
-        }, 300)
-      }
-      this.searchMoveDown(30)
     }
     this.searchMusics = async ({target: el}) => {
       const musicSearch = el.value.trim().toUpperCase()
-      const filtered = audiosData.filter( ({name}) => name.trim().toUpperCase().includes(musicSearch) )
-      this.renderCardsMusics(filtered)
-    }
-    this.searchMoveUp = function(ms = 300){
-      setTimeout( () => {
-        this.c_headerMusics.classList.add("hide")
-      }, ms)
-    }
-    this.searchMoveDown = function(ms = 300){
-      setTimeout( () => {
-        this.c_headerMusics.classList.remove("hide")
-      }, ms)
+      const filtered = audiosData.musics.filter( ({name}) => name.trim().toUpperCase().includes(musicSearch) )
+      this.renderCardsMusics(filtered, true)
     }
     this.actionsCard = (e) => {
       const { target: el } = e
@@ -114,6 +96,15 @@ const callbacks = {
           this.currentPlaying = value
           this.isPlaying = true
           this.update()
+        },
+        card_search: () => {
+          this.currentPlaying = value
+          this.isPlaying = true
+          el.classList.add("active")
+          setTimeout( () => {
+            this.update()
+            this.toggleSearch()
+          }, 200 )
         },
         actions: () => {
           const screen_y = window.innerHeight
@@ -186,9 +177,11 @@ const callbacks = {
       if(verticalMovement) {
         if(td_y < 0){
           this.main.classList.add("active")
+          this.c_player.classList.add("blur")
           return
         }
         this.main.classList.remove("active")
+        this.c_player.classList.remove("blur")
       }
     }
   }
