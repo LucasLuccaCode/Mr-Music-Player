@@ -13,6 +13,8 @@ const selectorsAndEvents = {
     this.totalDuration = document.querySelector("[data-duration='total']")
     this.artist = document.querySelector("[data-artist]")
     this.controls = document.querySelector("[data-controls]")
+    this.btnRepeat = document.querySelector("[data-controls_card='repeat']")
+    this.btnRandom = document.querySelector("[data-controls_card='random']")
     this.btnPlayPause = document.querySelector("[data-controls_card='play'] img")
     this.main = document.querySelector("[data-main]")
     this.mainSlider = document.querySelector("[data-main_slider]")

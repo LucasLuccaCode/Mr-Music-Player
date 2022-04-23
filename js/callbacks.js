@@ -9,20 +9,21 @@ const callbacks = {
         search: () => {
           this.toggleSearch()
         },
-        settings: () => {
+        settings: async () => {
+          if(this.isPlaying) this.playPause("pause")
           this.removeStorage()
           alert("Dados apagados...")
+          if(this.path == "."){ 
+            window.location.reload()
+            return
+          }
+          audiosData = { musics: [], timeTotal: 0 }
+          this.musics.innerHTML = ""
+          this.start()
         }
       }
       const func = actions[key]
       if(func) func()
-    }
-    this.exitSceneTasker = function(){
-      const timeout = setTimeout(()=>{
-        clearTimeout(timeout)
-        tasker.setLocalVar("cont_exit", 0)
-        window.navigator.vibrate(15)
-      }, 5000)
     }
     this.slideAudio = function() {
       this.audio.pause()
@@ -44,8 +45,8 @@ const callbacks = {
       this.seekbar.value = this.audio.currentTime
     }
     this.audioEnded = function() {
-      if (!this.statusRepeat) this.currentPlaying++
-      if (this.currentPlaying > audiosData.length -1) this.currentPlaying = 0
+      if(!this.statusRepeat) this.currentPlaying++
+      if(this.currentPlaying > audiosData.length -1) this.currentPlaying = 0
       this.isPlaying = true
       this.update()
     }
@@ -56,15 +57,16 @@ const callbacks = {
     }
     this.actionsControl = ( { target: el }) => {
       const btn = el.getAttribute("data-controls_card")
-      if (!btn) return
 
-      return {
+      const actions = {
         repeat: () => this.toggleRepeat(),
         previous: () => this.previous(),
         play: () => this.playPause(),
         next: () => this.next(),
         random: () => this.toggleRandom(),
-      }[btn]() || ""
+      }
+      const func = actions[btn]
+      if(func) func()
     }
     this.toggleSearch = function() {
       const isVisible = this.c_search.className.includes("active")
@@ -72,12 +74,11 @@ const callbacks = {
         this.musicsSearch.innerHTML = ""
         this.c_search.classList.add("active")
         this.inputSearch.focus()
-      } else {
-        this.c_search.classList.remove("active")
-        this.c_search.style.width = "0vw"
-        this.musicsSearch.innerHTML = ""
-        this.inputSearch.value = ""
-      }
+        return
+      } 
+      this.c_search.classList.remove("active")
+      this.musicsSearch.innerHTML = ""
+      this.inputSearch.value = ""
     }
     this.searchMusics = async ({target: el}) => {
       const musicSearch = el.value.trim().toUpperCase()
@@ -103,8 +104,8 @@ const callbacks = {
           el.classList.add("active")
           setTimeout( () => {
             this.update()
-            this.toggleSearch()
-          }, 200 )
+            el.classList.remove("active")
+          }, 100 )
         },
         actions: () => {
           const screen_y = window.innerHeight
@@ -122,24 +123,6 @@ const callbacks = {
           }
         },
       }[key]() || ""
-
-    }
-    this.footerActions = ({ target: el}) => {
-      const action = el.getAttribute("data-footer")
-      if( !action ) return
-      const functions = {
-        minimize: () => this.footerMinimize(),
-        order: () => this.footerOrder(),
-      }
-      const isPage = ["music","playlist","lyric"]
-        .some( page => page == action )
-      if(isPage){
-        const to = document.querySelector(`.c-player__c_page [data-page="${action}"]`).offsetLeft
-        this.c_page.scroll(to,0)
-        return
-      }
-      const func = functions[action]
-      func()
     }
     this.speedUpAudio = ( { target: el }) => {
       const btn = el.getAttribute("data-controls")
@@ -155,14 +138,6 @@ const callbacks = {
       if (!btn) return
       clearInterval(this.interval)
       this.interval = false
-    }
-    this.callbackObserver = (entries, observer) => { entries.forEach( 
-      ({  isIntersecting, intersectionRatio, target: el }) => {
-        
-        const elementoVisivel = isIntersecting === true || intersectionRatio > 1;
-        if (elementoVisivel) this.actionsVisiblePage(el)
-  
-      })
     }
     this.touchStart = (e) => {
       ts_x = e.touches[0].clientX;

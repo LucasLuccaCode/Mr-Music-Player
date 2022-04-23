@@ -98,9 +98,9 @@ const ultilities = {
     this.renderCardsMusics = async function(data, isSearch) {
       const htmlCards = data.map( 
         ({id, name, duration, nReproduced }) => {
-       const cardActive = this.currentPlaying == id
+       const isActiveCard = this.currentPlaying == id
          return `
-          <li class="c-musics__card ${ cardActive && !isSearch ? 'active' : '' }" data-card${isSearch ? "_search" : "" }="${id}">
+          <li class="c-musics__card ${ isActiveCard && !isSearch ? 'active' : '' }" data-card${isSearch ? "_search" : "" }="${id}">
             <div class="c-musics__card__icon">
               <img src="${this.path}/src/icons/music-black.png" loading="lazy" />
               <span>${ duration || "00:00" }</span>
@@ -120,9 +120,19 @@ const ultilities = {
         this.musicsSearch.innerHTML = htmlCards
     
     }
+    this.renderProgressDurations = function(){
+      const section = document.createElement("section")
+      section.innerHTML = `
+      <div>
+        <p>0 / 100</p>  
+      </div>
+      `
+      this.c_player.appendChild(section)
+    }
     this.calculateMusicsTimes = async () => {
       musicsTotal = audiosData.musics.length
-      
+      timeTotal = conputed = 0
+     
       audiosData.musics.forEach( ({ id, name }) => {
         const audio = new Audio();
         audio.src = `${player.musicsPath}/${name}`
@@ -146,7 +156,7 @@ const ultilities = {
           console.log(`${audiosData.musics.length} caches de musicas salvas no storage...`)
           this.updateTimeTotal()
         }
-      }, 3000)
+      }, 300)
     }
 
   }

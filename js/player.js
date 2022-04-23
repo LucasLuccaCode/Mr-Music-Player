@@ -3,17 +3,13 @@ const player = {
   path: typeof tasker === 'undefined' ? "." : tasker.path,
   musicsPath: typeof tasker === 'undefined' ? "./src/musics" : tasker.musicsPath,
   internal: false,
-  existStorage: false,
   isPlaying: false,
   statusRepeat: false,
   statusRandom: false,
-  lastActiveFooter: false,
-  observador: false,
   currentPlaying: 0,
   cardActive: false,
   currentAudio: {},
   musicsPlayed: [],
-  observador: false,
   
   setContexts(){
     selectorsAndEvents.selectors.call(this)
@@ -24,9 +20,13 @@ const player = {
   },
   async start() {
     //this.removeStorage()
+    //this.renderProgressDurations()
     const hasStorageData = await this.checkStorageData()
     if(hasStorageData) this.assignSaveData()
-    if(!hasStorageData && this.path != ".") this.listMusics()
+    if(!hasStorageData && this.path != ".") {
+      this.totalTimesElem.textContent = "..."
+      await this.listMusics()
+    }
     this.renderCardsMusics(audiosData.musics)
     if(audiosData.timeTotal) this.updateTimeTotal()
     if(!hasStorageData) this.calculateMusicsTimes()
@@ -55,8 +55,8 @@ const player = {
     this.isPlaying = true
     this.update()
   },
-  playPause() {
-    if(this.isPlaying) {
+  playPause(action) {
+    if(this.isPlaying || action == "pause") {
       this.audio.pause()
       this.isPlaying = false
       this.btnPlayPause.src = `${this.path}/src/icons/play.webp`
@@ -79,22 +79,29 @@ const player = {
     this.update()
   },
   randomizeMusics() {
-    let was_reproduced = this.musicsPlayed.indexOf(this.currentPlaying)
-    if (this.musicsPlayed.length == audiosData.musics.length) this.musicsPlayed = []
-    while (was_reproduced != -1) {
-      this.currentPlaying = this.getNumberRandom(0, audiosData.musics.length - 1)
-      was_reproduced = this.musicsPlayed.indexOf(this.currentPlaying)
+    const numberRandom = Math.floor( Math.random() * this.musicsPlayed.length )
+    this.currentPlaying = this.musicsPlayed[numberRandom]
+    this.musicsPlayed.splice(numberRandom, 1)
+    
+    if(!this.musicsPlayed.length){ 
+      alert("Todas musicas foram tocadas")
+      this.musicsPlayed = audiosData.musics.map( ({id}) => id )
     }
-    this.musicsPlayed.push(this.currentPlaying)
   },
-  toggleRepeat() {
+  toggleRepeat(){
+    if(this.statusRepeat) this.btnRepeat.classList.remove("active")
+    if(!this.statusRepeat) this.btnRepeat.classList.add("active")
     this.statusRepeat = !this.statusRepeat
-    this.btn_repeat.style.background = this.statusRepeat ? "rgba(0,255,255, .5)": "#44444a"
   },
-  toggleRandom() {
-    this.removeStorage()
+  toggleRandom(){
+    if(this.statusRandom){
+      this.btnRandom.classList.remove("active")
+      this.musicsPlayed = []
+    }
+    if(!this.statusRandom){ 
+      this.btnRandom.classList.add("active")
+      this.musicsPlayed = audiosData.musics.map( ({id}) => id )
+    }
     this.statusRandom = !this.statusRandom
-    this.btn_random.style.background = this.statusRandom ? "rgba(0,255,255, .5)": "#44444a"
   }
-
 }
