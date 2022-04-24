@@ -1,7 +1,7 @@
 
 const ultilities = {
   functions(){
-    let timeTotal = conputed = musicsTotal = 0
+    let totalTimes = conputed = musicsTotal = 0
     this.checkStorageData = function(){
       return localStorage.hasOwnProperty("audiosData")
     }
@@ -20,6 +20,12 @@ const ultilities = {
       const value = data[key]
       return { data, key, value }
     }
+    this.getNumberMusics = async function(){
+      const directory = `${player.musicsPath}`
+      const code = `#!/bin/bash;
+      ls "${directory}" | wc -l`
+      return await tasker.actionsShell(code)
+    }
     this.listMusics = async function() {
       const directory = `${player.musicsPath}`
       const code = `#!/bin/bash;
@@ -28,7 +34,7 @@ const ultilities = {
       
       const regex = /(.+)\|\|(.+)/
       const re = new RegExp(regex, 'g')
-      listMusics = listMusics.replace(re, '{ "id": "$1", "name": "$2" },').replace(/.$/,"")
+      listMusics = listMusics.replace(re, '{ "id": $1, "name": "$2", "nReproduced": 0 },').replace(/.$/,"")
       const json = `[${listMusics}]`
       audiosData["musics"] = JSON.parse(json)
     }
@@ -93,7 +99,11 @@ const ultilities = {
       return `${ Number(hours) ? hours.slice(-2)+":": ""}${ minutes.slice(-2) }:${ seconds.slice(-2) }`
     }
     this.updateTimeTotal = function(){
-      this.totalTimesElem.textContent = audiosData.timeTotal
+      this.totalTimesElem.textContent = audiosData.totalTimes
+    }
+    this.renderLoading = async function(){
+      this.musics.innerHTML = `<section class="c-loading"><div></div><section>`
+      await this.sleep(10)
     }
     this.renderCardsMusics = async function(data, isSearch) {
       const htmlCards = data.map( 
@@ -122,16 +132,22 @@ const ultilities = {
     }
     this.renderProgressDurations = function(){
       const section = document.createElement("section")
+      section.setAttribute("data-container_progress_durations", "")
+      section.setAttribute("class", "c--flex")
       section.innerHTML = `
-      <div>
-        <p>0 / 100</p>  
+      <div class="content c--flex">
+        <h3>Carregando durações das musicas</h3>
+        <div class="progress"><div data-progress_barra></div></div>
+        <p data-progress_durations>0 / 100</p>  
       </div>
       `
       this.c_player.appendChild(section)
+      setTimeout( () => section.classList.add("active"), 100)
     }
     this.calculateMusicsTimes = async () => {
+      this.renderProgressDurations()
       musicsTotal = audiosData.musics.length
-      timeTotal = conputed = 0
+      totalTimes = conputed = 0
      
       audiosData.musics.forEach( ({ id, name }) => {
         const audio = new Audio();
@@ -139,25 +155,23 @@ const ultilities = {
         audio.onloadedmetadata = function(e){
           conputed++
           const duration = player.setDuration(parseInt(this.duration))
-          timeTotal += parseInt(this.duration)
+          totalTimes += parseInt(this.duration)
           audiosData.musics[id].duration = duration
-          
+          document.querySelector("[data-progress_durations]").textContent = `${conputed} / ${musicsTotal}`
+          document.querySelector("[data-progress_barra]").style.width = `${ ( conputed * 100 ) / musicsTotal }%`
           document.querySelector(`[data-card="${id}"] .c-musics__card__icon span`).textContent = duration
+          
+          if(conputed >= musicsTotal) player.allDurationsLoaded(totalTimes)
         }
       })
-      this.checkAllSetDurations()
     }
-    this.checkAllSetDurations = async function(){
-      const interval = setInterval( ()=> {
-        if(conputed >= musicsTotal) {
-          clearInterval(interval)
-          audiosData.timeTotal = this.setDuration(timeTotal)
-          this.saveData(audiosData)
-          console.log(`${audiosData.musics.length} caches de musicas salvas no storage...`)
-          this.updateTimeTotal()
-        }
-      }, 300)
+    this.allDurationsLoaded = function(totalTimes){
+      audiosData.totalTimes = this.setDuration(totalTimes)
+      this.updateTimeTotal();
+      setTimeout(() => { 
+        document.querySelector("[data-container_progress_durations]").remove() 
+      }, 500 )
+      this.saveData(audiosData)
     }
-
   }
 }

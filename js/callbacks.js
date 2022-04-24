@@ -17,7 +17,7 @@ const callbacks = {
             window.location.reload()
             return
           }
-          audiosData = { musics: [], timeTotal: 0 }
+          audiosData = { ...audiosDataDefault }
           this.musics.innerHTML = ""
           this.start()
         }
@@ -99,7 +99,7 @@ const callbacks = {
           this.update()
         },
         card_search: () => {
-          this.currentPlaying = value
+          this.currentPlaying = Number(value)
           this.isPlaying = true
           el.classList.add("active")
           setTimeout( () => {
@@ -108,21 +108,11 @@ const callbacks = {
           }, 100 )
         },
         actions: () => {
-          const screen_y = window.innerHeight
-          const x = e.clientX
-          const y = e.clientY
-          const div = document.createElement("div")
-          div.setAttribute("class", "c-player__card__c_actions")
-          div.style.top = `${y-25}px`
-          div.style.right = `8vw`
-          div.innerHTML = `<p>${audiosData[value].nReproduced}</p><p> Excluir </p><p>Adicionar Playlist</p><p>Favoritar</p>`
-          this.c_player.appendChild(div)
-          div.onclick = async () => {
-            await this.sleep(200)
-            div.remove()
-          }
+          console.log(value)
         },
-      }[key]() || ""
+      }
+      const func = actions[key]
+      if(func) func()
     }
     this.speedUpAudio = ( { target: el }) => {
       const btn = el.getAttribute("data-controls")
@@ -144,7 +134,9 @@ const callbacks = {
       ts_y = e.touches[0].clientY;
     }
     this.touchMoveEnd = (e) => {
-      const className = e.target.className
+      const { key } = this.getDataSetAttributes(e.target)
+      if(key == "card" || key == "actions") return
+      
       const td_x = e.changedTouches[0].clientX - ts_x;
       const td_y = e.changedTouches[0].clientY - ts_y;
     

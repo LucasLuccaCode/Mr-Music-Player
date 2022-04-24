@@ -32,8 +32,8 @@ const selectorsAndEvents = {
     this.audio.onloadeddata = () => this.audioLoadedData()
     this.audio.ontimeupdate = () => this.audioTimeUpdate()
     this.audio.onended = () => this.audioEnded()
-    this.mainSlider.addEventListener("touchstart", this.touchStart)
-    this.mainSlider.addEventListener("touchmove", this.touchMoveEnd)
+    this.main.addEventListener("touchstart", this.touchStart)
+    this.main.addEventListener("touchmove", this.debounce(this.touchMoveEnd, 10))
     this.musics.addEventListener("click", this.actionsCard)
     this.musicsSearch.addEventListener("click", this.actionsCard)
   },

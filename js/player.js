@@ -2,7 +2,6 @@ const player = {
   audio: new Audio(),
   path: typeof tasker === 'undefined' ? "." : tasker.path,
   musicsPath: typeof tasker === 'undefined' ? "./src/musics" : tasker.musicsPath,
-  internal: false,
   isPlaying: false,
   statusRepeat: false,
   statusRandom: false,
@@ -20,15 +19,33 @@ const player = {
   },
   async start() {
     //this.removeStorage()
-    //this.renderProgressDurations()
-    const hasStorageData = await this.checkStorageData()
+    await this.renderLoading()
+    let numberMusics
+    let hasStorageData = await this.checkStorageData()
     if(hasStorageData) this.assignSaveData()
-    if(!hasStorageData && this.path != ".") {
-      this.totalTimesElem.textContent = "..."
-      await this.listMusics()
+    if(this.path != "."){ 
+      numberMusics = await this.getNumberMusics()
+      if(!hasStorageData || numberMusics != audiosData.totalMusics){
+        let isConfirmed
+        if(hasStorageData){
+          isConfirmed = confirm("Lista de musicas desatualizada, deseja atualizar agora?")
+          if(isConfirmed){ 
+            audiosData = { ...audiosDataDefault }
+            this.musics.innerHTML = ""
+            hasStorageData = false
+          }
+        }
+        if(isConfirmed || isConfirmed == undefined){
+          this.totalTimesElem.textContent = "..."
+          await this.sleep(10)
+          await this.listMusics()
+          audiosData.totalMusics = audiosData.musics.length
+        }
+      }
     }
+    this.currentPlaying = audiosData.lastPlay
     this.renderCardsMusics(audiosData.musics)
-    if(audiosData.timeTotal) this.updateTimeTotal()
+    if(audiosData.totalTimes) this.updateTimeTotal()
     if(!hasStorageData) this.calculateMusicsTimes()
     this.update()
   },
@@ -41,13 +58,11 @@ const player = {
     this.artist.textContent = this.splitName(this.currentAudio.name)
     this.activateCard()
     if(this.isPlaying) this.audio.play()
-    
     this.btnPlayPause.src = `${this.path}/src/icons/${ this.isPlaying ? "pause" : "play"}.webp`
     
-    if(12 == 56){
-      ++audiosData.musics[this.currentPlaying].nReproduced
-      this.saveData(audiosData)
-    }
+    audiosData.lastPlay = Number(this.currentPlaying)
+    ++this.currentAudio.nReproduced
+    this.saveData(audiosData)
   },
   previous() {
     this.currentPlaying--

@@ -43,6 +43,98 @@ input, button {
   border: 0;
 }
 
+/* LOADING */
+
+.c-loading {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  width: 7vw;
+  height: 7vw;
+  transform: translate(-50%, -50%);
+}
+
+.c-loading div {
+  width: 100%;
+  height: 100%;
+  border: 1vw solid var(--secondary-color);
+  border-top: 1vw solid cyan;
+  border-radius: 50%;
+  animation: isRotate 1s linear infinite;
+}
+
+@keyframes isRotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* PROGRESS DURATIONS */
+
+[data-container_progress_durations] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0, .3);
+  z-index: 110;
+}
+
+[data-container_progress_durations] .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 1vw;
+  padding: 2vh 3vh;
+  background: #4a4a50;
+  box-shadow: 0 .5vh .5vh .3vh rgba(0,0,0, .12);
+  opacity: 0;
+}
+
+[data-container_progress_durations].active .content {
+  animation: slide-in-fwd-center 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+@keyframes slide-in-fwd-center {
+  100% {
+    opacity: 1;
+  }
+}
+
+
+[data-container_progress_durations] h3 {
+  font-size: .9rem;
+  color: #efefff;
+}
+
+[data-container_progress_durations] .progress {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 1vh;
+  border-radius: 50vw;
+  margin-top: 2.5vh;
+  background: var(--secondary-color);
+  overflow: hidden;
+}
+
+[data-container_progress_durations] .progress div {
+  height: 100%;
+  width: 0%;
+  background: cyan;
+  border-radius: inherit;
+  transition: width .1s linear;
+}
+
+[data-container_progress_durations] p {
+  color: cyan;
+  font-size: .8rem;
+  margin-top: 2.5vh;
+  font-weight: bold;
+}
+
+
 /* PLAYER */
 
 .c-player {
@@ -278,6 +370,15 @@ input, button {
 .c-header__controls li:first-child {
   position: absolute;
   left: var(--margin-default);
+}
+
+.c-header__controls li.active:first-child::before {
+  content: "1";
+  pointer-events: none;
+  position: absolute;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: .4rem;
 }
 
 .c-header__controls li:last-child {
