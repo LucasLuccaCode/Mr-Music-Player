@@ -19,13 +19,14 @@ const callbacks = {
           }
           audiosData = { ...audiosDataDefault }
           this.musics.innerHTML = ""
+          this.artist.innerHTML = "..."
           this.start()
         }
       }
       const func = actions[key]
       if(func) func()
     }
-    this.slideAudio = function() {
+    this.slideAudio = () => {
       this.audio.pause()
       this.audio.currentTime = this.seekbar.value
       this.audio.play()
@@ -35,20 +36,76 @@ const callbacks = {
         this.cardActive.classList.add("playing")
       }
     }
-    this.audioLoadedData = function(){
+    this.audioError = (e, action) => {
+      const { id } = e.path[0]
+      console.log(audiosData.musics.length+" / "+audiosData.musics[id].name+" / "+action)
+      const card = document.querySelector(`[data-card="${id}"]`)
+      if(card) card.remove()
+      audiosData.musics[id].existFile = false
+      console.log(audiosData.musics[id])
+      console.log(audiosData.musics.length)
+      if(action == "duration") ++conputed
+      if(action == "next") this.next()
+      --audiosData.totalMusics
+      //audiosData.musics.splice(id, 1)
+      // this.next()
+    }
+    this.audioLoadedData = (e) => {
       const duration = this.setDuration(this.audio.duration)
       this.seekbar.max = this.audio.duration
       this.totalDuration.textContent = duration
+      
+      this.artist.textContent = this.splitName(this.currentAudio.name)
+      if(this.isPlaying) this.audio.play()
+      this.btnPlayPause.src = `${this.path}/src/icons/${ this.isPlaying ? "pause" : "play"}.webp`
+      
+      audiosData.lastPlay = Number(this.currentPlaying)
+      ++this.currentAudio.nReproduced
+      ++audiosData.totalPlayed
+      this.saveData(audiosData)
     }
-    this.audioTimeUpdate = function() {
+    this.audioTimeUpdate = () => {
       this.currentDuration.textContent =  this.setDuration(this.audio.currentTime)
       this.seekbar.value = this.audio.currentTime
     }
-    this.audioEnded = function() {
+    this.audioEnded = () => {
       if(!this.statusRepeat) this.currentPlaying++
       if(this.currentPlaying > audiosData.length -1) this.currentPlaying = 0
       this.isPlaying = true
       this.update()
+    }
+    this.removeBlurs = ({ target: el}) => {
+      const { key } = this.getDataSetAttributes(el)
+      if(key != "player") return
+      this.c_player.classList.remove("main")
+      this.c_player.classList.remove("order")
+    }
+    this.showOptionsOrder = () => {
+      document.querySelector(`[data-order_option="${audiosData.orderOption}"]`).checked = true
+      this.c_player.classList.add("order")
+    }
+    this.orderActions = ({ target: el }) => {
+      const { value, key } = this.getDataSetAttributes(el)
+      if(key != "order_option") return
+
+      const array = audiosData.musics
+      const actions = {
+        ranking: ()=> this.orderRanking(array),
+        longer_duration: ()=> this.orderLongerDuration(array),
+        shorter_duration: ()=> this.orderShorterDuration(array),
+        nameC: ()=> this.orderNameC(array),
+        nameD: ()=> this.orderNameD(array),
+        date: ()=> this.orderDate(array),
+      }
+      const func = actions[value]
+      if(func){
+        setTimeout( () => {
+          audiosData.musics = this.recreateIds(func())
+          this.renderCardsMusics(audiosData.musics)
+          audiosData.orderOption = value
+          this.saveData(audiosData)
+        }, 0 )
+      }
     }
     this.actionsMoreOptions = function(){
       const card = document.querySelector(`.c-player__musics [data-card="${this.currentPlaying}"]`)
@@ -68,7 +125,7 @@ const callbacks = {
       const func = actions[btn]
       if(func) func()
     }
-    this.toggleSearch = function() {
+    this.toggleSearch = () => {
       const isVisible = this.c_search.className.includes("active")
       if (!isVisible) {
         this.musicsSearch.innerHTML = ""
@@ -143,12 +200,10 @@ const callbacks = {
       const verticalMovement = Math.abs(td_x) < Math.abs(td_y)
       if(verticalMovement) {
         if(td_y < 0){
-          this.main.classList.add("active")
-          this.c_player.classList.add("blur")
+          this.c_player.classList.add("main")
           return
         }
-        this.main.classList.remove("active")
-        this.c_player.classList.remove("blur")
+        this.c_player.classList.remove("main")
       }
     }
   }

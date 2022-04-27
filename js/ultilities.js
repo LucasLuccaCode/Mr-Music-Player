@@ -29,12 +29,11 @@ const ultilities = {
     this.listMusics = async function() {
       const directory = `${player.musicsPath}`
       const code = `#!/bin/bash;
-      ls -oh -atx "${directory}" | awk 'NR > 1 { print NR-2"||"$0 }'`
+      ls -atxo "${directory}" | awk 'NR > 1 { print NR-2"/"$0 }'`
       let listMusics = await tasker.actionsShell(code)
-      
-      const regex = /(.+)\|\|(.+)/
+      const regex = /([0-9]+)\/.+(\d{4}\-\d{2}\-\d{2})\s(\d{1,2}\:\d{2})\s(.+)/
       const re = new RegExp(regex, 'g')
-      listMusics = listMusics.replace(re, '{ "id": $1, "name": "$2", "nReproduced": 0 },').replace(/.$/,"")
+      listMusics = listMusics.replace(re, '{ "id": $1, "name": "$4", "duration": 0, "hour": "$3", "date": "$2", "nReproduced": 0, "existFile": true },').replace(/.$/,"")
       const json = `[${listMusics}]`
       audiosData["musics"] = JSON.parse(json)
     }
@@ -98,6 +97,9 @@ const ultilities = {
   
       return `${ Number(hours) ? hours.slice(-2)+":": ""}${ minutes.slice(-2) }:${ seconds.slice(-2) }`
     }
+    this.updateTotalMusics = function(){
+      document.querySelector("[data-total_musics]").textContent = audiosData.totalMusics
+    }
     this.updateTimeTotal = function(){
       this.totalTimesElem.textContent = audiosData.totalTimes
     }
@@ -107,19 +109,20 @@ const ultilities = {
     }
     this.renderCardsMusics = async function(data, isSearch) {
       const htmlCards = data.map( 
-        ({id, name, duration, nReproduced }) => {
-       const isActiveCard = this.currentPlaying == id
-         return `
-          <li class="c-musics__card ${ isActiveCard && !isSearch ? 'active' : '' }" data-card${isSearch ? "_search" : "" }="${id}">
+        ({id, name, duration, date, existFile, nReproduced }) => {
+       const isActiveCard = audiosData.lastPlay === id
+    
+         return existFile ? `
+          <li class="c-musics__card ${ isActiveCard && !isSearch ? 'active' : '' } ${ this.isPlaying && isActiveCard ? 'playing' : '' }" data-card${ isSearch ? "_search" : "" }="${id}">
             <div class="c-musics__card__icon">
-              <img src="${this.path}/src/icons/music-black.png" loading="lazy" />
+              <img src="${this.path}/src/icons/${ isActiveCard ? 'music-playing.webp' : 'music-black.png' }" loading="lazy" />
               <span>${ duration || "00:00" }</span>
             </div>
             <p class="c-musics__card__name nowrap">${ this.splitName(name) }</p>
             <div class="c-musics__card__points" data-actions="${id}">
               <span></span>
             </div>
-          </li>`
+          </li>` : ""
         }).join("")
         
         if(!isSearch) { 
@@ -138,31 +141,35 @@ const ultilities = {
       <div class="content c--flex">
         <h3>Carregando durações das musicas</h3>
         <div class="progress"><div data-progress_barra></div></div>
-        <p data-progress_durations>0 / 100</p>  
+        <p data-progress_durations>...</p>  
       </div>
       `
       this.c_player.appendChild(section)
       setTimeout( () => section.classList.add("active"), 100)
     }
-    this.calculateMusicsTimes = async () => {
+    this.calculateMusicsTimes = () => {
       this.renderProgressDurations()
       musicsTotal = audiosData.musics.length
       totalTimes = conputed = 0
      
       audiosData.musics.forEach( ({ id, name }) => {
         const audio = new Audio();
+        audio.id = id
         audio.src = `${player.musicsPath}/${name}`
         audio.onloadedmetadata = function(e){
           conputed++
           const duration = player.setDuration(parseInt(this.duration))
           totalTimes += parseInt(this.duration)
-          audiosData.musics[id].duration = duration
+          if(audiosData.musics[id]){
+            audiosData.musics[id].duration = duration
+            document.querySelector(`[data-card="${id}"] .c-musics__card__icon span`).textContent = duration
+          }
+         // console.log(conputed+" / "+audiosData.musics[conputed].name)
           document.querySelector("[data-progress_durations]").textContent = `${conputed} / ${musicsTotal}`
           document.querySelector("[data-progress_barra]").style.width = `${ ( conputed * 100 ) / musicsTotal }%`
-          document.querySelector(`[data-card="${id}"] .c-musics__card__icon span`).textContent = duration
-          
           if(conputed >= musicsTotal) player.allDurationsLoaded(totalTimes)
         }
+        audio.onerror = (e) => this.audioError(e, "duration")
       })
     }
     this.allDurationsLoaded = function(totalTimes){

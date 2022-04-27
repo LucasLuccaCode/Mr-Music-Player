@@ -1,0 +1,45 @@
+
+/* ACTIONS */
+
+.c-musics__card__actions {
+  display: flex;
+  /flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  background: #44444a;
+  border-radius: 1vw;
+  box-shadow: rgba(0, 255, 255, 0.8) 0px 0px 0px 3px;
+  z-index: 20;
+}
+
+.c-musics__card__actions p {
+  color: var(--color-details);
+  display: flex;
+  align-items: center;
+  position: relative;
+  /width: 100%;
+  font-size: .7rem;
+  padding: 15px 15px;
+  font-weight: bold;
+  white-space: nowrap;
+  / border-bottom: 1px solid rgba(0,0,0, .2);
+}
+
+.c-musics__card__actions p::after {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  left: -.35vw;
+  width: .7vw;
+  height: 70%;
+  background: rgba(0,0,0, .12);
+}
+
+.c-musics__card__actions p:nth-child(1)::after {
+  display: none;
+}
+
+.c-musics__card__actions p:active {
+  background: rgba(0,0,0, .12);
+}

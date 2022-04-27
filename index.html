@@ -4,7 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./css/index.css">
+  <link rel="stylesheet" href="./css/header.css">
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="./css/actions_card.css">
   <script src="./js/data.js" defer></script>
+  <script src="./js/formatting.js" defer></script>
   <script src="./js/ultilities.js" defer></script>
   <script src="./js/callbacks.js" defer></script>
   <script src="./js/selectorsAndEvents.js" defer></script>
@@ -82,13 +86,64 @@
 
     <!-- MAIN -->
     <main class="c-main" data-main>
-      <div class="c-main__slider" data-main_slider><span></span></div>
-      <div class="c-main__total_times">
-        <img src="./src/icons/time.png" alt="Total_Times" />
-        <p data-total_times>...</p>
-      </div>
+      <div class="c-main__slider"><span></span></div>
+      <ul class="c-main__options" data-options>
+        <li>
+          <div>
+            <img src="./src/icons/total_musics.png" alt="Total_Times" />
+            <p data-total_musics>...</p>
+          </div>
+          <div>
+            <img src="./src/icons/time.png" alt="Total_Times" />
+            <p data-total_times>...</p>
+          </div>
+        </li>
+        <li>
+          <div class="c-main__options__order" data-options="order">
+            <img src="./src/icons/order.png" alt="ordenar" />
+            <p>Ordenar</p>
+          </div>
+          <div class="c-main__options__select">
+            <label data-options="select">
+              <input class="checkbox" data-options_select type="checkbox" />
+              <p>Selecionar</p>
+            </label>
+          </div>
+        </li>
+      </ul>
       <ul class="c-main__musics" data-musics></ul>
     </main>
+    
+    <!-- ORDER OPTIONS -->
+    <section class="c-order" data-order_options>
+      <div class="c-main__slider"><span></span></div>
+      <div class="c-order__options">
+        <label>
+          <p> Mais tocadas</p>
+          <input data-order_option="ranking" class="c--flex" type="radio" value="add" name="order"/>
+        </label>
+        <label >
+          <p> Duração (maior) </p>
+          <input data-order_option="longer_duration" class="c--flex" type="radio" name="order"/>
+        </label>
+        <label >
+          <p> Duração (menor) </p>
+          <input data-order_option="shorter_duration" class="c--flex" type="radio" name="order"/>
+        </label>
+        <label>
+          <p> Nome (A-Z) </p>
+          <input data-order_option="nameC" class="c--flex" type="radio" name="order"/>
+        </label>
+        <label>
+          <p> Nome (Z-A) </p>
+          <input data-order_option="nameD" class="c--flex" type="radio" name="order"/>
+        </label>
+        <label>
+          <p> Data </p>
+          <input data-order_option="date"  class="c--flex" type="radio" name="order"/>
+        </label>
+      </div>
+    </section>
   </section>
   
 </body>

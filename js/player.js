@@ -11,6 +11,7 @@ const player = {
   musicsPlayed: [],
   
   setContexts(){
+    formatting.functions.call(this)
     selectorsAndEvents.selectors.call(this)
     callbacks.functions.call(this)
     ultilities.functions.call(this)
@@ -46,27 +47,24 @@ const player = {
     this.currentPlaying = audiosData.lastPlay
     this.renderCardsMusics(audiosData.musics)
     if(audiosData.totalTimes) this.updateTimeTotal()
+    if(audiosData.totalMusics) this.updateTotalMusics()
     if(!hasStorageData) this.calculateMusicsTimes()
-    this.update()
+    if(audiosData.lastPlay !== false) this.update()
   },
   update() {
     if(this.statusRandom) this.randomizeMusics()
+    this.activateCard()
     this.currentAudio = audiosData.musics[this.currentPlaying]
     this.audio.pause()
     this.audio.currentTime = 0
     this.audio.src = this.setPath(this.currentAudio.name)
-    this.artist.textContent = this.splitName(this.currentAudio.name)
-    this.activateCard()
-    if(this.isPlaying) this.audio.play()
-    this.btnPlayPause.src = `${this.path}/src/icons/${ this.isPlaying ? "pause" : "play"}.webp`
-    
-    audiosData.lastPlay = Number(this.currentPlaying)
-    ++this.currentAudio.nReproduced
-    this.saveData(audiosData)
+    this.audio.id = this.currentPlaying
   },
   previous() {
     this.currentPlaying--
     if (this.currentPlaying < 0) this.currentPlaying = audiosData.musics.length - 1
+    const existFile = audiosData.musics[this.currentPlaying].existFile
+    if(!existFile) --this.currentPlaying
     this.isPlaying = true
     this.update()
   },
@@ -90,6 +88,8 @@ const player = {
   next() {
     this.currentPlaying++
     if (this.currentPlaying > audiosData.musics.length -1) this.currentPlaying = 0
+    const existFile = audiosData.musics[this.currentPlaying].existFile
+    if(!existFile) ++this.currentPlaying
     this.isPlaying = true
     this.update()
   },
