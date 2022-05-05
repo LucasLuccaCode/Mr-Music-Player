@@ -6,12 +6,17 @@ const player = {
   statusRepeat: false,
   statusRandom: false,
   currentPlaying: 0,
-  cardActive: false,
+  activeCard: false,
   currentAudio: {},
   musicsPlayed: [],
+  alertFunc: () => {
+    alert("yes")
+  },
   
   setContexts(){
     formatting.functions.call(this)
+    updateRender.update.call(this)
+    updateRender.render.call(this)
     selectorsAndEvents.selectors.call(this)
     callbacks.functions.call(this)
     ultilities.functions.call(this)
@@ -21,14 +26,15 @@ const player = {
   async start() {
     //this.removeStorage()
     await this.renderLoading()
-    let numberMusics
     let hasStorageData = await this.checkStorageData()
+    console.log(`[hasStorageData] => ${hasStorageData}`)
     if(hasStorageData) this.assignSaveData()
+    console.log(`[this.path] => ${this.path}`)
     if(this.path != "."){ 
-      numberMusics = await this.getNumberMusics()
-      if(!hasStorageData || numberMusics != audiosData.totalMusics){
+      let numberMusics = await this.getNumberMusics()
+      if(!hasStorageData || numberMusics != audiosData.totalMusics || !audiosData.totalMusics){
         let isConfirmed
-        if(hasStorageData){
+        if(hasStorageData && audiosData.totalMusics){
           isConfirmed = confirm("Lista de musicas desatualizada, deseja atualizar agora?")
           if(isConfirmed){ 
             audiosData = { ...audiosDataDefault }
@@ -37,21 +43,34 @@ const player = {
           }
         }
         if(isConfirmed || isConfirmed == undefined){
-          this.totalTimesElem.textContent = "..."
+          this.totalDurationsElem.textContent = "..."
           await this.sleep(10)
           await this.listMusics()
-          audiosData.totalMusics = audiosData.musics.length
+          if(!audiosData.musics.length){
+            const msg = "<p class='infor'>Não foram encontradas musicas na pasta indicada</p>"
+            this.musics.innerHTML = msg
+            //audiosData.totalMusics = audiosData.musics.length
+            //this.saveData(audiosData)
+            return
+          }
         }
       }
     }
+    if(!hasStorageData) audiosData.totalMusics = audiosData.musics.length
+    console.log(`[audiosData.totalMusics] => ${audiosData.totalMusics}`)
     this.currentPlaying = audiosData.lastPlay
+    console.log(`[this.currentPlaying] => ${this.currentPlaying}`)
+    
     this.renderCardsMusics(audiosData.musics)
-    if(audiosData.totalTimes) this.updateTimeTotal()
+    if(audiosData.totalDurations) this.updateTotalDurations()
+    console.log(`[audiosData.totalDurations] => ${audiosData.totalDurations}`)
     if(audiosData.totalMusics) this.updateTotalMusics()
     if(!hasStorageData) this.calculateMusicsTimes()
     if(audiosData.lastPlay !== false) this.update()
   },
   update() {
+    if(!audiosData.musics.length) return
+    console.log(`[--CurrentPlaying] => ${this.currentPlaying}`)
     if(this.statusRandom) this.randomizeMusics()
     this.activateCard()
     this.currentAudio = audiosData.musics[this.currentPlaying]
@@ -63,8 +82,6 @@ const player = {
   previous() {
     this.currentPlaying--
     if (this.currentPlaying < 0) this.currentPlaying = audiosData.musics.length - 1
-    const existFile = audiosData.musics[this.currentPlaying].existFile
-    if(!existFile) --this.currentPlaying
     this.isPlaying = true
     this.update()
   },
@@ -82,14 +99,12 @@ const player = {
     this.toggleMusicPlaying()
   },
   toggleMusicPlaying(){
-    if(this.isPlaying) this.cardActive.classList.add("playing")
-    if(!this.isPlaying) this.cardActive.classList.remove("playing")
+    if(this.isPlaying) this.activeCard.classList.add("playing")
+    if(!this.isPlaying) this.activeCard.classList.remove("playing")
   },
   next() {
     this.currentPlaying++
     if (this.currentPlaying > audiosData.musics.length -1) this.currentPlaying = 0
-    const existFile = audiosData.musics[this.currentPlaying].existFile
-    if(!existFile) ++this.currentPlaying
     this.isPlaying = true
     this.update()
   },

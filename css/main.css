@@ -9,13 +9,15 @@
   width: 100%;
   /background: #4a4a50;
   background: #424148;
+  /background-image: linear-gradient(to top, #3a3a40, #37373d);
   overflow: hidden;
   /box-shadow: 0px -.2vh rgba(255,255,255, .1);
   flex: 1;
   z-index: 101;
 }
 
-.c-player.main .c-main {
+.c-player.main .c-main,
+.c-player.select .c-main{
   position: absolute;
   bottom: 0;
   height: 95%;
@@ -29,10 +31,11 @@
 
 /* SLIDER */
 .c-main__slider {
+  pointer-events: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 4vh;
+  min-height: 5vh;
   width: 100%;
   /border-bottom: .3vh solid rgba(255,255,255, .05);
 }
@@ -40,14 +43,16 @@
 .c-main__slider span {
   pointer-events: none;
   width: 15%;
-  min-height: .6vh;
+  margin-bottom: 1vh;
+  min-height: .7vh;
   border-radius: 50vw;
   background: #626168;
 }
 
-/* OPTIOMS */
+/* OPTIONS */
 
 .c-main__options {
+  pointer-events: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -84,6 +89,11 @@
   margin-left: 3vw;
 }
 
+.c-main__options li:last-child div:nth-child(1),
+.c-main__options li:last-child div:nth-child(2) {
+  pointer-events: auto;
+}
+
 .c-main__options__order:active {
   background: var(--secondary-color);
 }
@@ -97,6 +107,13 @@
   height: 3vw;
 }
 
+.c-main__options__select input:checked::before {
+  width: 1vw;
+  height: 1.5vw;
+  border-right: 0.4vw solid var(--color-details);
+  border-bottom: 0.4vw solid var(--color-details);
+}
+
 .c-main__options__select input::before {
   display: none;
 }
@@ -105,8 +122,6 @@
 
 .c-main__musics {
   position: relative;
-  display: flex;
-  flex-direction: column;
   width: 100%;
   flex: 1;
   overflow-y: auto;
@@ -122,6 +137,15 @@
   background: rgba(0,255,255, .7);
 }
 
+.c-main__musics .infor {
+  font-size: .7rem;
+  color: #828188;
+  width: 100%;
+  text-align: center;
+  padding: var(--margin-default);
+  margin-top: 3vh;
+}
+
 /* CARDS */
 
 .c-musics__card {
@@ -132,15 +156,49 @@
   padding: 1vh 0;
   padding-left: var(--margin-default);
   padding-right: calc(var(--margin-default) - 1vw );
-  list-style: none;
-  /transition: background .1s linear;
+  overflow: hidden;
 }
 
-.c-musics__card.active {
-  position: sticky;
-  top: 0;
-  background: rgba(0,220,220, 1);
-  z-index: 2;
+.c-musics__card::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bgcolor-active);
+  width: 0vw;
+  height: 0vw;
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.c-musics__card.active::before {
+  animation: activate-card .3s ease;
+}
+
+@keyframes activate-card {
+  100%{
+    width: 700px;
+    height: 700px;
+  }
+}
+
+/* CARD SELECT */
+
+.c-musics__card label {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.c-musics__card .checkbox {
+  display: none;
+  width: 4.5vw;
+  height: 4.5vw;
+  margin-right: 2vw;
+}
+
+.c-player.select .c-musics__card .checkbox {
+  display: flex;
 }
 
 .c-musics__card__icon {
@@ -151,13 +209,15 @@
   align-items: center;
   justify-content: space-between;
   padding: .7vw 0;
-  width: calc(1rem * 2.25);
-  height: calc(1rem * 2.25);
-  max-width: 9vw;
-  max-height: 9vw;
-  background: #EDEEFF;
-  box-shadow: 0px 2px 0px #9f9faf;
-  border-radius: .7vw;
+  width: calc(1rem * 2.50);
+  height: calc(1rem * 2.50);
+  /max-width: 9vw;
+  /max-height: 9vw;
+  /background: var(--secondary-color);
+  box-shadow: 0px 1.5px 0px 0px #a2a1a8;
+  background: #efefff;
+  /box-shadow: 0px 0px 0px 2px cyan;
+  border-radius: .8vw;
 }
 
 .c-musics__card__icon img {
@@ -165,7 +225,8 @@
 }
 
 .c-musics__card__icon span {
-  color: #EDEEFF;
+  /display: none;
+  color: var(--color-details);
   border-radius: .5vw;
   width: calc(100% - 1vw);
   text-align: center;
@@ -173,18 +234,39 @@
   font-weight: bold;
   font-size: .45rem;
   /margin-top: .3vh;
-  background-image: linear-gradient( to right, #64646a, #54545a);
+  background: #525158;
+  /background-image: linear-gradient( to right, #00b1ff, var(--color-details));
 }
 
 .c-musics__card__name {
   pointer-events: none;
-  color: #afafbf;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  margin-left: var(--margin-default);
+  margin-right: calc(var(--margin-default) - 1vw);
+  overflow: hidden;
+}
+
+.c-musics__card__name p {
+  /color: #8E8B95;
+  color: #83808a;
   /color: #616069;
   font-weight: bold;
   font-size: .6rem;
   letter-spacing: .1vw;
-  margin: 0 2vw;
-  flex: 1;
+  /flex: 1;
+}
+
+.c-musics__card__name span {
+  font-size: .6rem;
+  color: #929198;
+  padding: 1vw;
+  border-radius: 50vw;
+  font-weight: bold;
+  margin-left: 1.5vw;
+  background: #525158;
 }
 
 .c-musics__card.active .c-musics__card__icon img {
@@ -200,22 +282,63 @@
   display: none;
 }
 
-
 .c-musics__card.active .c-musics__card__icon {
-  background: var(--color-details);
+  /background: var(--color-details);
   justify-content: center;
-  box-shadow: 0px 2px 1px rgba(0,0,0, .2);
+  box-shadow: 0px .5px 2px 2px #525158;
   padding: 1.5vw;
 }
 
-.c-musics__card.active .c-musics__card__name {
-  color: #54545a;
+.c-musics__card.active .c-musics__card__name p {
+  color: var(--color-details);
+}
+
+.c-musics__card.active .c-musics__card__name span {
+  display: none;
 }
 
 @keyframes music-playing {
   from {
     transform: scale(1.2);
   }
+}
+
+/* SELECT */
+
+.c-main__select {
+  display: none;
+  width: 100%;
+  background: #4F4E54;
+}
+
+.c-player.select .c-main__select {
+  display: flex;
+}
+
+.c-main__select li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  padding: 1vh 0;
+}
+
+.c-main__select li:active {
+  background: rgba(255,255,255, .12);
+}
+
+.c-main__select img {
+  pointer-events: none;
+  width: 4vw;
+  height: 4vw;
+}
+
+.c-main__select p {
+  pointer-events: none;
+  font-size: .6rem;
+  color: #efefff;
+  font-weight: bold;
+  margin-top: .6vh;
 }
 
 /* ============================================================
@@ -229,6 +352,10 @@
   height: 100%;
   /background: red;
   padding: 1vw;
+}
+
+.c-player.select .c-musics__card__points {
+  display: none;
 }
 
 .c-musics__card__points span {

@@ -33,33 +33,35 @@ const callbacks = {
       if(!this.isPlaying){
         this.isPlaying = true
         this.btnPlayPause.src = `${this.path}/src/icons/pause.webp`
-        this.cardActive.classList.add("playing")
+        this.activeCard.classList.add("playing")
       }
     }
-    this.audioError = (e, action) => {
+    this.audioError = e => {
       const { id } = e.path[0]
-      console.log(audiosData.musics.length+" / "+audiosData.musics[id].name+" / "+action)
+     // alert(`Música "${audiosData.musics[id].name}" não encontrada`)
       const card = document.querySelector(`[data-card="${id}"]`)
       if(card) card.remove()
-      audiosData.musics[id].existFile = false
-      console.log(audiosData.musics[id])
-      console.log(audiosData.musics.length)
-      if(action == "duration") ++conputed
-      if(action == "next") this.next()
-      --audiosData.totalMusics
-      //audiosData.musics.splice(id, 1)
-      // this.next()
+      audiosData.totalDurations -= audiosData.musics[id].duration
+      this.updateTotalDurations()
+      audiosData.musics.splice(id, 1)
+      audiosData.musics = this.recreateIds(audiosData.musics)
+      console.log(audiosData.musics)
+      audiosData.totalMusics = audiosData.musics.length
+      this.updateTotalMusics()
+      if(+this.currentPlaying > audiosData.musics.length -1) this.currentPlaying = 0
+      this.updateDataCardsIds()
+      this.update()
     }
-    this.audioLoadedData = (e) => {
+    this.audioLoadedData = () => {
       const duration = this.setDuration(this.audio.duration)
-      this.seekbar.max = this.audio.duration
-      this.totalDuration.textContent = duration
-      
-      this.artist.textContent = this.splitName(this.currentAudio.name)
       if(this.isPlaying) this.audio.play()
+      this.updateSeekbar(this.audio.duration)
+      this.updateTotalDuration(duration)
+      this.updateArtist()
+      
       this.btnPlayPause.src = `${this.path}/src/icons/${ this.isPlaying ? "pause" : "play"}.webp`
       
-      audiosData.lastPlay = Number(this.currentPlaying)
+      audiosData.lastPlay = +this.currentPlaying
       ++this.currentAudio.nReproduced
       ++audiosData.totalPlayed
       this.saveData(audiosData)
@@ -69,16 +71,20 @@ const callbacks = {
       this.seekbar.value = this.audio.currentTime
     }
     this.audioEnded = () => {
-      if(!this.statusRepeat) this.currentPlaying++
-      if(this.currentPlaying > audiosData.length -1) this.currentPlaying = 0
-      this.isPlaying = true
+      if(!this.statusRepeat){
+        this.next()
+        return
+      }
       this.update()
     }
-    this.removeBlurs = ({ target: el}) => {
+    this.removeBlurs = ({ target: el}, run) => {
       const { key } = this.getDataSetAttributes(el)
-      if(key != "player") return
+      if(key != "player" && !run) return
+      this.c_player.classList.remove("blur")
       this.c_player.classList.remove("main")
       this.c_player.classList.remove("order")
+      this.alertProgress.classList.remove("active")
+      this.confirmationAlert.classList.remove("active")
     }
     this.showOptionsOrder = () => {
       document.querySelector(`[data-order_option="${audiosData.orderOption}"]`).checked = true
@@ -99,12 +105,12 @@ const callbacks = {
       }
       const func = actions[value]
       if(func){
-        setTimeout( () => {
+        setTimeout(() => {
           audiosData.musics = this.recreateIds(func())
           this.renderCardsMusics(audiosData.musics)
           audiosData.orderOption = value
           this.saveData(audiosData)
-        }, 0 )
+        }, 0)
       }
     }
     this.actionsMoreOptions = function(){
@@ -145,11 +151,11 @@ const callbacks = {
     this.actionsCard = (e) => {
       const { target: el } = e
       const { key, value } = this.getDataSetAttributes(el)
-
+      console.log(`[card_value] => ${value}`)
       const actions = {
         card: () => {
           const card = el
-          if(!value || this.cardActive === card ) return
+          if(!value || this.activeCard === card ) return
     
           this.currentPlaying = value
           this.isPlaying = true
@@ -165,7 +171,7 @@ const callbacks = {
           }, 100 )
         },
         actions: () => {
-          console.log(value)
+          console.log(audiosData.musics[value].nReproduced)
         },
       }
       const func = actions[key]
@@ -192,7 +198,7 @@ const callbacks = {
     }
     this.touchMoveEnd = (e) => {
       const { key } = this.getDataSetAttributes(e.target)
-      if(key == "card" || key == "actions") return
+      if(key != "main" && key != "order_options") return
       
       const td_x = e.changedTouches[0].clientX - ts_x;
       const td_y = e.changedTouches[0].clientY - ts_y;
@@ -200,10 +206,11 @@ const callbacks = {
       const verticalMovement = Math.abs(td_x) < Math.abs(td_y)
       if(verticalMovement) {
         if(td_y < 0){
-          this.c_player.classList.add("main")
+          if(key == "main") this.c_player.classList.add("main")
           return
         }
-        this.c_player.classList.remove("main")
+        if(key == "main") this.c_player.classList.remove("main")
+        if(key == "order_options") this.c_player.classList.remove("order")
       }
     }
   }

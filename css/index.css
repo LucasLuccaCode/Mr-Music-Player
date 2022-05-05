@@ -4,6 +4,9 @@
   --secondary-color: #3a3a40;
   --margin-default: 3vw;
   --color-details: cyan;
+  --bgcolor-active: rgba(255,255,255, .07);
+  --details-color2: #4952CF;
+  --text-color: #efefff;
 }
 
 *, *::after, *::before {
@@ -24,7 +27,7 @@ body, html {
   height: 100%;
   width: 100%;
   font-size: 4vw;
-  //user-select: none;
+  user-select: none;
 }
 
 .nowrap {
@@ -74,59 +77,6 @@ li {
   }
 }
 
-/* PROGRESS DURATIONS */
-
-[data-container_progress_durations] {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0, .3);
-  z-index: 110;
-}
-
-[data-container_progress_durations] .content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border-radius: 1vw;
-  padding: 2vh 3vh;
-  background: #4a4a50;
-  box-shadow: 0 .5vh .5vh .3vh rgba(0,0,0, .12);
-}
-
-[data-container_progress_durations] h3 {
-  font-size: .9rem;
-  color: #efefff;
-}
-
-[data-container_progress_durations] .progress {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: 1vh;
-  border-radius: 50vw;
-  margin-top: 2.5vh;
-  background: var(--secondary-color);
-  overflow: hidden;
-}
-
-[data-container_progress_durations] .progress div {
-  height: 100%;
-  width: 0%;
-  background: cyan;
-  border-radius: inherit;
-  transition: width .1s linear;
-}
-
-[data-container_progress_durations] p {
-  color: cyan;
-  font-size: .8rem;
-  margin-top: 2.5vh;
-  font-weight: bold;
-}
-
 
 /* PLAYER */
 
@@ -141,7 +91,10 @@ li {
   overflow: hidden;
 }
 
-.c-player.main::after {
+.c-player.blur::after,
+.c-player.main::after,
+.c-player.order::after, 
+.c-player.select::after {
   content: "";
   position: absolute;
   top: 0;
@@ -149,18 +102,16 @@ li {
   background: rgba(0,0,0, .3);
   width: 100%;
   height: 100%;
-  z-index: 100;
 }
 
-.c-player.order::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: rgba(0,0,0, .3);
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
+.c-player.blur::after,
+.c-player.order::after{
+  z-index: 1000 !important;
+}
+
+.c-player.main::after, 
+.c-player.select::after {
+  z-index: 100;
 }
 
 /* SEARCH */
@@ -275,6 +226,8 @@ li {
   background: #424148;
   width: 100%;
   padding-bottom: 1vh;
+  border-top-left-radius: 4vw;
+  border-top-right-radius: 4vw;
   z-index: 1001;
   transition: .3s ease-out;
 }
@@ -291,14 +244,20 @@ li {
 }
 
 .c-order__options label {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.5vh var(--margin-default);
+  padding: 2vh var(--margin-default);
+  border-bottom: .3vh solid rgba(255,255,255, .03);
 }
 
 .c-order__options label:active {
-  background: var(--secondary-color);
+  background: var(--bgcolor-active);
+}
+
+.c-order__options label:last-child {
+  border-bottom: none;
 }
 
 .c-order__options label p {
@@ -325,8 +284,8 @@ li {
 .c-order__options input:checked::before {
   content: "";
   position: absolute;
-  width: 2.5vw;
-  height: 2.5vw;
+  width: 2vw;
+  height: 2vw;
   border-radius: 50%;
   background: cyan;
   opacity: 1;
@@ -335,4 +294,88 @@ li {
 .c-order__options input::before {
   opacity: 0;
   transition: opacity .3s ease;
+}
+
+/* ALERT PROGRESS */
+
+.c-alert {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 1vw;
+  padding: 2vh 3vh;
+  background: #4a4a50;
+  box-shadow: 0 .5vh .5vh .3vh rgba(0,0,0, .12);
+  z-index: 1003;
+}
+
+.c-alert.active {
+  display: flex;
+}
+
+.c-alert h3 {
+  font-size: .9rem;
+  color: #efefff;
+  white-space: nowrap;
+}
+
+.c-alert .progress {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 1vh;
+  border-radius: 50vw;
+  margin-top: 2.5vh;
+  background: var(--secondary-color);
+  overflow: hidden;
+}
+
+.c-alert .progress div {
+  height: 100%;
+  width: 0%;
+  background: cyan;
+  border-radius: inherit;
+  transition: width .1s linear;
+}
+
+.c-alert p {
+  color: cyan;
+  font-size: .8rem;
+  margin-top: 2.5vh;
+  font-weight: bold;
+}
+
+.c-alert .buttons {
+  width: 100%;
+  display: flex;
+  margin-top: 3vh;
+}
+
+.c-alert .buttons button {
+  width: 50%;
+  padding: 2vw;
+  color: #efefff;
+  font-weight: bold;
+  background: transparent;
+  border-radius: 1vw;
+  background: rgba(255,255,255, .08);
+}
+
+
+.c-alert .buttons button:active {
+  transform: scale(.95);
+}
+
+.c-alert .buttons button.active {
+  background: transparent;
+  color: cyan;
+  border: .3vh solid cyan;
+}
+
+.c-alert .buttons button:last-child {
+  margin-left: 2vw;
 }

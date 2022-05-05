@@ -2,15 +2,7 @@
 const formatting = {
   functions(){
     this.recreateIds = function(array){
-      let hasPlayingDefined = false
-      return array.map( (item, index) => { 
-        if(item.id == audiosData.lastPlay && !hasPlayingDefined){
-          hasPlayingDefined = true
-          this.currentPlaying = index
-          audiosData.lastPlay = index
-        }
-        return  { ...item, id: index }
-      })
+      return array.map( (item, index) =>  ({ ...item, id: index }) )
     }
     this.orderRanking = function(array){
       return [...array].sort( (a,b) => b.nReproduced - a.nReproduced)

@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./css/index.css">
-  <link rel="stylesheet" href="./css/header.css">
-  <link rel="stylesheet" href="./css/main.css">
-  <link rel="stylesheet" href="./css/actions_card.css">
-  <script src="./js/data.js" defer></script>
-  <script src="./js/formatting.js" defer></script>
-  <script src="./js/ultilities.js" defer></script>
-  <script src="./js/callbacks.js" defer></script>
-  <script src="./js/selectorsAndEvents.js" defer></script>
-  <script src="./js/player.js" defer></script>
-  <script src="./js/index.js" defer></script>
+  <link rel="stylesheet" href="%path/css/index.css">
+  <link rel="stylesheet" href="%path/css/header.css">
+  <link rel="stylesheet" href="%path/css/main.css">
+  <link rel="stylesheet" href="%path/css/actions_card.css">
+  <script src="%path/js/data.js" defer></script>
+  <script src="%path/js/updateRender.js" defer></script>
+  <script src="%path/js/formatting.js" defer></script>
+  <script src="%path/js/ultilities.js" defer></script>
+  <script src="%path/js/callbacks.js" defer></script>
+  <script src="%path/js/selectorsAndEvents.js" defer></script>
+  <script src="%path/js/player.js" defer></script>
   <title>Mr Music Player</title>
 </head>
 <body>
@@ -22,7 +22,7 @@
     <section class="c-search" data-search>
       <form class="c-form" data-form_search method="get" accept-charset="utf-8">
         <div class="c--flex" data-back_search>
-          <img src="./src/icons/left.webp" alt="" />  
+          <img src="%path/src/icons/left.webp" alt="" />  
         </div>
         <input data-input_search 
           type="text" 
@@ -37,17 +37,17 @@
     <header class="c-header">
       <div class="c-header__title" data-title>
         <div class="c--flex" data-search>
-          <img src="./src/icons/header_search.webp" alt="search" />
+          <img src="%path/src/icons/header_search.webp" alt="search" />
         </div>
         <h1>Mr Music Player</h1>
     	  <div class="c--flex" data-settings>
-          <img src="./src/icons/header_settings.webp" alt="conf" />
+          <img src="%path/src/icons/header_settings.webp" alt="conf" />
     	  </div>
     	</div>
       
       <!-- COVER LOGO -->
       <div class="c-header__cover">
-        <img src="./src/icons/player.webp" alt="" />
+        <img src="%path/src/icons/player.webp" alt="" />
       </div>
 
       <!-- SEEKBAR -->
@@ -67,19 +67,19 @@
       <!-- CONTROLS -->
       <ul class="c-header__controls" data-controls>
         <li data-controls_card="repeat">
-          <img src="./src/icons/repeat.webp" />
+          <img src="%path/src/icons/repeat.webp" />
         </li>
         <li data-controls_card="previous">
-          <img src="./src/icons/previous.webp" />
+          <img src="%path/src/icons/previous.webp" />
         </li>
         <li data-controls_card="play">
-          <img src="./src/icons/play.webp" />
+          <img src="%path/src/icons/play.webp" />
         </li>
         <li data-controls_card="next">
-          <img src="./src/icons/next.webp" />
+          <img src="%path/src/icons/next.webp" />
         </li>
         <li data-controls_card="random">
-          <img src="./src/icons/random.webp" />
+          <img src="%path/src/icons/random.webp" />
         </li>
       </ul>
     </header>
@@ -90,21 +90,21 @@
       <ul class="c-main__options" data-options>
         <li>
           <div>
-            <img src="./src/icons/total_musics.png" alt="Total_Times" />
+            <img src="%path/src/icons/total_musics.png" alt="Total_Times" />
             <p data-total_musics>...</p>
           </div>
           <div>
-            <img src="./src/icons/time.png" alt="Total_Times" />
+            <img src="%path/src/icons/time.png" alt="Total_Times" />
             <p data-total_times>...</p>
           </div>
         </li>
         <li>
           <div class="c-main__options__order" data-options="order">
-            <img src="./src/icons/order.png" alt="ordenar" />
+            <img src="%path/src/icons/order.png" alt="ordenar" />
             <p>Ordenar</p>
           </div>
           <div class="c-main__options__select">
-            <label data-options="select">
+            <label>
               <input class="checkbox" data-options_select type="checkbox" />
               <p>Selecionar</p>
             </label>
@@ -112,6 +112,20 @@
         </li>
       </ul>
       <ul class="c-main__musics" data-musics></ul>
+      <ul class="c-main__select" data-select_options>
+        <li data-select_option="cancel">
+          <img src="%path/src/icons/select_cancel.png" alt="Cancelar" />
+          <p>CANCELAR</p>
+        </li>
+        <li data-select_option="add">
+          <img src="%path/src/icons/select_add.png" alt="Adicionar" />
+          <p>ADICIONAR</p>
+        </li>
+        <li data-select_option="delete">
+          <img src="%path/src/icons/select_delete.png" alt="Excluir" />
+          <p>EXCLUIR</p>
+        </li>
+      </ul>
     </main>
     
     <!-- ORDER OPTIONS -->
@@ -144,6 +158,23 @@
         </label>
       </div>
     </section>
+    
+    <!-- ALERT PROGRESS -->
+    <section class="c-alert" data-alert_progress>
+      <h3>Conteudo da mensagem</h3>
+      <div class="progress"><div></div></div>
+      <p>...</p>  
+    </section>
+    
+    <!-- CONFIRMATION ALERT -->
+    <section class="c-alert" data-confirmation_alert>
+      <h3>Conteudo da mensagem</h3>
+      <div class="buttons">
+        <button data-confirmation_alert="no">Não</button>
+        <button data-confirmation_alert="yes" class="active">Sim</button>
+      </div>
+    </section>
+    
   </section>
   
 </body>

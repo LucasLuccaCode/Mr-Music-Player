@@ -1,7 +1,7 @@
 
 const ultilities = {
   functions(){
-    let totalTimes = conputed = musicsTotal = 0
+    let totalDurations = conputed = musicsTotal = deletedFiles = 0
     this.checkStorageData = function(){
       return localStorage.hasOwnProperty("audiosData")
     }
@@ -20,6 +20,12 @@ const ultilities = {
       const value = data[key]
       return { data, key, value }
     }
+    this.getSelectedsCheckbox = function(){
+      return [...document.querySelectorAll("[data-card_select]:checked")]
+    }
+    this.selectAllCheckbox = function(){
+      return [...document.querySelectorAll("[data-card_select]:checked")]
+    }
     this.getNumberMusics = async function(){
       const directory = `${player.musicsPath}`
       const code = `#!/bin/bash;
@@ -33,7 +39,7 @@ const ultilities = {
       let listMusics = await tasker.actionsShell(code)
       const regex = /([0-9]+)\/.+(\d{4}\-\d{2}\-\d{2})\s(\d{1,2}\:\d{2})\s(.+)/
       const re = new RegExp(regex, 'g')
-      listMusics = listMusics.replace(re, '{ "id": $1, "name": "$4", "duration": 0, "hour": "$3", "date": "$2", "nReproduced": 0, "existFile": true },').replace(/.$/,"")
+      listMusics = listMusics.replace(re, '{ "id": $1, "name": "$4", "duration": 0, "hour": "$3", "date": "$2", "nReproduced": 0 },').replace(/.$/,"")
       const json = `[${listMusics}]`
       audiosData["musics"] = JSON.parse(json)
     }
@@ -63,18 +69,18 @@ const ultilities = {
       }
     }
     this.activateCard = function(){
-      if(this.cardActive) { 
-        this.cardActive.classList.remove("active")
-        const icon = this.cardActive.querySelector("img")
+      if(this.activeCard) { 
+        this.activeCard.classList.remove("active")
+        this.activeCard.classList.remove("playing")
+        const icon = this.activeCard.querySelector("img")
         icon.src = `${this.path}/src/icons/music-black.png`
-        this.cardActive.classList.remove("playing")
       }
       const icon = document.querySelector(`[data-card="${this.currentPlaying}"] img`)
       const card = document.querySelector(`[data-card="${this.currentPlaying}"]`)
       icon.src = `${this.path}/src/icons/music-playing.webp`
       if(this.isPlaying) card.classList.add("playing")
       card.classList.add("active")
-      this.cardActive = card
+      this.activeCard = card
     }
     this.sleep = function(ms) {
       return new Promise(resolve => setTimeout(resolve, ms))
@@ -97,88 +103,99 @@ const ultilities = {
   
       return `${ Number(hours) ? hours.slice(-2)+":": ""}${ minutes.slice(-2) }:${ seconds.slice(-2) }`
     }
-    this.updateTotalMusics = function(){
-      document.querySelector("[data-total_musics]").textContent = audiosData.totalMusics
+    this.showAlertProgress = function(msg){
+      this.c_player.classList.add("blur")
+      document.querySelector("[data-alert_progress] h3").textContent = msg
+      document.querySelector("[data-alert_progress] div > div").style.width = "0%"
+      document.querySelector("[data-alert_progress] p").textContent = "..."
+      this.alertProgress.classList.add("active")
     }
-    this.updateTimeTotal = function(){
-      this.totalTimesElem.textContent = audiosData.totalTimes
-    }
-    this.renderLoading = async function(){
-      this.musics.innerHTML = `<section class="c-loading"><div></div><section>`
-      await this.sleep(10)
-    }
-    this.renderCardsMusics = async function(data, isSearch) {
-      const htmlCards = data.map( 
-        ({id, name, duration, date, existFile, nReproduced }) => {
-       const isActiveCard = audiosData.lastPlay === id
-    
-         return existFile ? `
-          <li class="c-musics__card ${ isActiveCard && !isSearch ? 'active' : '' } ${ this.isPlaying && isActiveCard ? 'playing' : '' }" data-card${ isSearch ? "_search" : "" }="${id}">
-            <div class="c-musics__card__icon">
-              <img src="${this.path}/src/icons/${ isActiveCard ? 'music-playing.webp' : 'music-black.png' }" loading="lazy" />
-              <span>${ duration || "00:00" }</span>
-            </div>
-            <p class="c-musics__card__name nowrap">${ this.splitName(name) }</p>
-            <div class="c-musics__card__points" data-actions="${id}">
-              <span></span>
-            </div>
-          </li>` : ""
-        }).join("")
-        
-        if(!isSearch) { 
-          this.musics.innerHTML = htmlCards
-          this.cardActive = document.querySelector(`[data-card="${this.currentPlaying}"]`)
-          return
-        }
-        this.musicsSearch.innerHTML = htmlCards
-    
-    }
-    this.renderProgressDurations = function(){
-      const section = document.createElement("section")
-      section.setAttribute("data-container_progress_durations", "")
-      section.setAttribute("class", "c--flex")
-      section.innerHTML = `
-      <div class="content c--flex">
-        <h3>Carregando durações das musicas</h3>
-        <div class="progress"><div data-progress_barra></div></div>
-        <p data-progress_durations>...</p>  
-      </div>
-      `
-      this.c_player.appendChild(section)
-      setTimeout( () => section.classList.add("active"), 100)
+    this.showConfirmationAlert = function(msg){
+      this.c_player.classList.add("blur")
+      document.querySelector("[data-confirmation_alert] h3").textContent = msg
+      this.confirmationAlert.classList.add("active")
     }
     this.calculateMusicsTimes = () => {
-      this.renderProgressDurations()
+      this.showAlertProgress("Carregando durações das musicas")
       musicsTotal = audiosData.musics.length
-      totalTimes = conputed = 0
+      totalDurations = conputed = 0
      
       audiosData.musics.forEach( ({ id, name }) => {
         const audio = new Audio();
         audio.id = id
         audio.src = `${player.musicsPath}/${name}`
         audio.onloadedmetadata = function(e){
-          conputed++
+          ++conputed
           const duration = player.setDuration(parseInt(this.duration))
-          totalTimes += parseInt(this.duration)
+          totalDurations += parseInt(this.duration)
           if(audiosData.musics[id]){
-            audiosData.musics[id].duration = duration
+            audiosData.musics[id].duration = parseInt(this.duration)
             document.querySelector(`[data-card="${id}"] .c-musics__card__icon span`).textContent = duration
           }
          // console.log(conputed+" / "+audiosData.musics[conputed].name)
-          document.querySelector("[data-progress_durations]").textContent = `${conputed} / ${musicsTotal}`
-          document.querySelector("[data-progress_barra]").style.width = `${ ( conputed * 100 ) / musicsTotal }%`
-          if(conputed >= musicsTotal) player.allDurationsLoaded(totalTimes)
+          player.updateAlertProgress(conputed,musicsTotal)
+          if(conputed >= musicsTotal) player.allDurationsLoaded(totalDurations)
         }
-        audio.onerror = (e) => this.audioError(e, "duration")
+        audio.onerror = function(){ 
+          ++conputed 
+          if(conputed >= musicsTotal) player.allDurationsLoaded(totalDurations)
+        }
       })
     }
-    this.allDurationsLoaded = function(totalTimes){
-      audiosData.totalTimes = this.setDuration(totalTimes)
-      this.updateTimeTotal();
+    this.allDurationsLoaded = function(totalDurations){
+      audiosData.totalDurations = totalDurations
+      this.updateTotalDurations()
       setTimeout(() => { 
-        document.querySelector("[data-container_progress_durations]").remove() 
+        this.alertProgress.classList.remove("active") 
+        this.c_player.classList.remove("blur")
       }, 500 )
       this.saveData(audiosData)
+    }
+    this.removeFiles = function(ids){
+      ids.map( id => {
+        const code = `rm -rf "${this.musicsPath}/${audiosData.musics[id].name}"`
+        if(this.path !== ".") tasker.actionsShell(code)
+        
+        document.querySelector(`[data-card="${id}"]`).remove()
+        audiosData.totalDurations -= audiosData.musics[id].duration
+        --audiosData.totalMusics
+        ++deletedFiles
+        this.updateAlertProgress(deletedFiles,ids.length)
+      })
+    }
+    this.removeMusics = function(ids){
+      audiosData.musics = audiosData.musics.filter( 
+        ({id}) =>  !ids.includes(String(id)))
+    }
+    this.startDeleteMusics = function(selecteds){
+      deletedFiles = 0
+      let lastID = false
+      
+      this.showAlertProgress(`Excluindo ${selecteds.length} musicas`)
+      setTimeout( ()=> {
+        const ids = selecteds.map( el => {
+          const id = el.parentNode.parentNode.getAttribute("data-card")
+          if(id == audiosData.lastPlay) lastID = true
+          return id
+        })
+        this.removeFiles(ids)
+        this.removeMusics(ids)
+        this.updateTotalDurations()
+        audiosData.musics = this.recreateIds(audiosData.musics)
+        audiosData.totalMusics = audiosData.musics.length
+        this.updateTotalMusics()
+        this.updateDataCardsIds()
+        this.saveData(audiosData)
+        setTimeout( ()=> {
+          this.alertProgress.classList.remove("active")
+        }, 500)
+        if(lastID){ 
+          this.currentPlaying = 0
+          this.update()
+        }
+        this.alertFunc = false
+        console.log(this)
+      }, 1000)
     }
   }
 }
