@@ -12,19 +12,22 @@ const callbacks = {
         settings: async () => {
           if(this.isPlaying) this.playPause("pause")
           this.removeStorage()
-          alert("Dados apagados...")
-          if(this.path == "."){ 
-            window.location.reload()
-            return
-          }
-          audiosData = { ...audiosDataDefault }
           this.musics.innerHTML = ""
           this.artist.innerHTML = "..."
-          this.start()
+          this.start(true)
+          this.createMsg("Dados apagados...", true)
         }
       }
       const func = actions[key]
       if(func) func()
+    }
+    this.removeMsg = ({ target: el }) => {
+      const { key } = this.getDataSetAttributes(el)
+      if(key != "msg_cancel") return 
+      const card = el.parentNode
+      const { value } = this.getDataSetAttributes(card)
+      if(value) clearInterval(value)
+      setTimeout( () => card.remove(), 250)
     }
     this.slideAudio = () => {
       this.audio.pause()
@@ -45,7 +48,6 @@ const callbacks = {
       this.updateTotalDurations()
       audiosData.musics.splice(id, 1)
       audiosData.musics = this.recreateIds(audiosData.musics)
-      console.log(audiosData.musics)
       audiosData.totalMusics = audiosData.musics.length
       this.updateTotalMusics()
       if(+this.currentPlaying > audiosData.musics.length -1) this.currentPlaying = 0
@@ -63,6 +65,7 @@ const callbacks = {
       
       audiosData.lastPlay = +this.currentPlaying
       ++this.currentAudio.nReproduced
+      this.updateReproducionNumber()
       ++audiosData.totalPlayed
       this.saveData(audiosData)
     }
@@ -80,11 +83,11 @@ const callbacks = {
     this.removeBlurs = ({ target: el}, run) => {
       const { key } = this.getDataSetAttributes(el)
       if(key != "player" && !run) return
-      this.c_player.classList.remove("blur")
       this.c_player.classList.remove("main")
       this.c_player.classList.remove("order")
-      this.alertProgress.classList.remove("active")
-      this.confirmationAlert.classList.remove("active")
+      //this.c_player.classList.remove("blur")
+      // this.alertProgress.classList.remove("active")
+      // this.confirmationAlert.classList.remove("active")
     }
     this.showOptionsOrder = () => {
       document.querySelector(`[data-order_option="${audiosData.orderOption}"]`).checked = true
@@ -108,6 +111,7 @@ const callbacks = {
         setTimeout(() => {
           audiosData.musics = this.recreateIds(func())
           this.renderCardsMusics(audiosData.musics)
+          this.activateCard()
           audiosData.orderOption = value
           this.saveData(audiosData)
         }, 0)
@@ -151,7 +155,7 @@ const callbacks = {
     this.actionsCard = (e) => {
       const { target: el } = e
       const { key, value } = this.getDataSetAttributes(el)
-      console.log(`[card_value] => ${value}`)
+
       const actions = {
         card: () => {
           const card = el
@@ -212,6 +216,97 @@ const callbacks = {
         if(key == "main") this.c_player.classList.remove("main")
         if(key == "order_options") this.c_player.classList.remove("order")
       }
+    }
+    this.actionsConfirmationAlert = ({ target: el }) => {
+      const { value } = this.getDataSetAttributes(el)
+      
+      const actions = {
+        not: ()=> this.alertFunc.not(),
+        yes: async () => { 
+          await this.alertFunc.yes()
+        },
+      }
+      const func = actions[value]
+      if(func){ 
+        setTimeout( async () => {
+          this.confirmationAlert.classList.remove("active")
+          await func()
+          this.c_player.classList.remove("blur")
+        }, 200)
+      }
+    }
+    this.longTapActions = ({ target: el }) => {
+      const { key, value } = this.getDataSetAttributes(el)
+      if(key != "card") return
+      window.navigator.vibrate(15)
+      this.c_player.classList.add("select")
+      const checkbox = el.querySelector("[data-card_select]")
+      checkbox.checked = !checkbox.checked
+      this.updateTotalMusics(`${ this.getSelectedsCheckbox().length } / ${ audiosData.totalMusics }`)
+    }
+    this.toggleCheckboxs = ({ target: el }) => {
+      const { key, value } = this.getDataSetAttributes(el)
+
+      const actions = {
+        options_select: () => {
+          if (el.checked) {
+            this.c_player.classList.add("select")
+            setTimeout(() => {
+              const selecteds = [...document.querySelectorAll("[data-card_select]")];
+              selecteds.forEach(el => el.checked = true)
+              this.updateTotalMusics(`${ selecteds.length } / ${ audiosData.totalMusics }`)
+            }, 100)
+            return
+          }
+          setTimeout(() => {
+            this.getSelectedsCheckbox().forEach(el => el.checked = false)
+            this.updateTotalMusics()
+          }, 100)
+        },
+        card_select: () => {
+          el = el.parentNode.parentNode
+          const { value } = this.getDataSetAttributes(el)
+          const totalSelecteds = document.querySelectorAll("[data-card_select]:checked").length
+          this.updateTotalMusics(`${ totalSelecteds } / ${ audiosData.totalMusics }`)
+
+          if (totalSelecteds == audiosData.totalMusics) {
+            document.querySelector("[data-options_select]").checked = true
+            return
+          }
+          const checkbox = document.querySelector("[data-options_select]")
+          if (checkbox.checked) checkbox.checked = false
+        },  
+      }
+      const func = actions[key]
+      if(func) setTimeout( ()=> func(), 50 )
+    }
+    this.selectionActions = ({ target: el }) => {
+      const { value } = this.getDataSetAttributes(el)
+
+      const actions = {
+        "cancel": () => { 
+          this.c_player.classList.remove("select")
+          document.querySelector("[data-options_select]").checked = false
+          this.updateTotalMusics()
+          this.getSelectedsCheckbox().forEach(el => el.checked = false)
+        },
+        "add": () => {
+          const selecteds = this.getSelectedsCheckbox()
+          console.log(selecteds)
+        },
+        "delete": () => {
+          const selecteds = this.getSelectedsCheckbox()
+          if(!selecteds.length){ 
+            this.createMsg("Você não selecionou nenhuma musica para apagar")
+            return
+          }
+          const msg = `Deseja mesmo apagar as ${selecteds.length} musicas?`
+          this.showConfirmationAlert(msg)
+          this.alertFunc.yes = () => this.startDeleteMusics(selecteds)
+        }
+      }
+      const func = actions[value]
+      if (func) setTimeout( () => func(), 300 )
     }
   }
 }

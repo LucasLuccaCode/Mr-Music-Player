@@ -138,7 +138,7 @@ li {
   display: flex;
   align-items: center;
   width: calc(100% - (var(--margin-default) * 2 ));
-  background: cyan;
+  background: #323138;
   padding: 1vw;
   margin-top: 10px;
   border-radius: 50vw;
@@ -147,7 +147,7 @@ li {
 
 .c-form div {
   padding: 8px;
-  background: var(--secondary-color);
+  background: #424148;
   border-radius: 50%;
 }
 
@@ -166,13 +166,13 @@ li {
   min-height: 100%;
   font-weight: bold;
   background: transparent;
-  color: var(--secondary-color);
+  color: var(--color-details);
   font-size: .7rem;
   margin-left: 2vw;
 }
 
 .c-form input::placeholder {
-  color: #626168;
+  color: #727178;
 }
 
 /* CHECKBOX */
@@ -378,4 +378,88 @@ li {
 
 .c-alert .buttons button:last-child {
   margin-left: 2vw;
+}
+
+
+/* MSG */
+
+.c-msg {
+  pointer-events: auto;
+  position: absolute;
+  bottom: 7vh;
+  display: block;
+  width: 100%;
+  max-height: 38vh;
+  padding: 0  var(--margin-default);
+  background: inherit;
+  z-index: 1005;
+  overflow: auto;
+}
+
+.c-msg li {
+  pointer-events: none;
+  overflow: hidden;
+  width: 100%;
+  border-radius: 1.7vw;
+  padding: 2vw;
+  margin: 1.5vh 0;
+}
+
+.c-msg li:last-child {
+  /margin-bottom: 0;
+}
+
+
+.c-msg li.sucess {
+  background: var(--details-color2);
+  box-shadow: 0px 2px 0px #3942bF;
+}
+
+.c-msg li.error {
+  background: #ff6090;
+  box-shadow: 0px 2px 1px #cf3060;
+}
+
+.c-msg__progress {
+  width: 6vw;
+  height: 6vw;
+  border-radius: 50vw;
+  border: 2px solid rgba(239, 239, 255, .8);
+  color: var(--text-color);
+  font-size: .6rem;
+}
+
+.c-msg__msg {
+  flex: 1;
+  margin: 0 2vw;
+}
+
+.c-msg__msg p {
+  line-height: 2.5vh;
+  color: rgba(239, 239, 255, .8);
+  font-weight: 400;
+  font-size: .8rem
+}
+
+.c-msg__msg span {
+  color: rgba(239, 239, 255, 1);
+  font-weight: bold;
+  font-size: .8rem;
+}
+
+.c-msg__cancel {
+  pointer-events: auto;
+  padding: 1vw;
+}
+
+.c-msg__cancel img {
+  pointer-events: none;
+  width: 5.5vw;
+  height: 5.5vw;
+  border-radius: 50vw;
+}
+
+.c-msg__cancel:active img {
+  transform: scale(1.5);
+  transition: .3s;
 }

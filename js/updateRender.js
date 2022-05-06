@@ -12,16 +12,16 @@ const updateRender = {
     }
     this.updateTotalMusics = function(total = audiosData.totalMusics){
       document.querySelector("[data-total_musics]").textContent = total
-      console.log(`[this.updateTotalMusics] => ${total}`)
     }
     this.updateTotalDurations = function(){
       this.totalDurationsElem.textContent = this.setDuration(audiosData.totalDurations)
-      console.log(`[this.updateTotalDurations] => ${this.setDuration(audiosData.totalDurations)}`)
+    }
+    this.updateReproducionNumber = function(){
+      document.querySelector(`[data-card="${this.currentPlaying}"] .c-musics__card__name span`).textContent = this.currentAudio.nReproduced
     }
     this.updateDataCardsIds = function(){
       const cards = [...document.querySelectorAll("[data-card]")]
       cards.forEach( (card, index) => card.setAttribute("data-card", index) )
-      console.log("[this.updateDataCardsIds]")
     }
     this.updateAlertProgress = function(c,total){
       document.querySelector("[data-alert_progress] p")
@@ -34,7 +34,27 @@ const updateRender = {
     this.renderLoading = async function(){
       this.musics.innerHTML = `<section class="c-loading"><div></div><section>`
       await this.sleep(10)
-      console.log("[renderLoading]")
+    }
+    this.renderSongsNotFound = function(){
+      const div = document.createElement("div")
+      div.setAttribute("class", "c-not_found")
+      div.innerHTML = `
+      <p>Não foram encontradas musicas na pasta indicada</p>
+      <div>
+        <input value="${this.musicsPath}">
+        <button class="c--flex"></button>
+      </div>`
+      this.musics.innerHTML = ""
+      this.musics.appendChild(div)
+      div.querySelector("button").onclick = () => {
+        const value = this.formatMusicPath(div.querySelector("input").value.trim())
+        if(value == "") return this.createMsg("Campo em vazio...")
+        tasker.setLocalVar("musics_path", value)
+        this.musicsPath = value
+        this.removeStorage()
+        this.musics.innerHTML = ""
+        this.start(true)
+      }
     }
     this.renderCardsMusics = async function(data, isSearch) {
       const htmlCards = data.map( 
@@ -59,7 +79,6 @@ const updateRender = {
             </div>
           </li>`
         }).join("")
-        console.log(`[this.renderCardsMusics]`)
         if(!isSearch) { 
           this.musics.innerHTML = htmlCards
           return
@@ -96,6 +115,40 @@ const updateRender = {
       `
       this.c_player.appendChild(section)
       setTimeout( () => section.classList.add("active"), 100)
+    }
+    this.getBodyMsg = (text, status, isPermanent) => {
+      const msg = document.createElement("li")
+      msg.setAttribute("class", `${status ? "sucess" : "error" } c--flex`)
+      msg.innerHTML = `
+      <div class="c-msg__progress c--flex">
+        ${ isPermanent ? "P" : "" }
+      </div>
+      <div class="c-msg__msg c--flex">
+        <p>${text}</p>
+      </div>
+      <div data-msg_cancel class="c-msg__cancel c--flex">
+        <img src="${this.path}/src/icons/msg_cancel.png">
+      </div>`
+      return msg
+    }
+    this.createMsg = async (text, status, isLongTime, isPermanent) => {
+      const msg = this.getBodyMsg(text, status, isPermanent)
+      const c_progress = msg.querySelector("div")
+      this.c_msg.prepend(msg)
+      if(isPermanent) return
+      let n = isLongTime ? 12 : 8
+      
+      await this.sleep(30)
+      
+      const interval = setInterval( ()=> {
+        c_progress.textContent = --n
+        if(n == 0) {
+          msg.remove()
+          clearInterval(interval)
+        }
+      },1000)
+      
+      msg.setAttribute("data-msg_card", interval)
     }
   }
 }

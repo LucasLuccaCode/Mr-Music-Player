@@ -137,13 +137,69 @@
   background: rgba(0,255,255, .7);
 }
 
-.c-main__musics .infor {
+/* MUSIC NOT FOUND */
+
+.c-not_found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 3vh;
+  width: 100%;
+  width: 100%;
+}
+
+.c-not_found > div {
+  display: flex;
+  align-items: center;
+  padding: 1vw;
+  width: 70%;
+  background: #323138;
+  border-radius: 50vw;
+}
+
+.c-not_found p {
   font-size: .7rem;
   color: #828188;
   width: 100%;
   text-align: center;
   padding: var(--margin-default);
-  margin-top: 3vh;
+}
+
+.c-not_found input {
+  background: transparent;
+  padding: 2vw;
+  border-radius: 50vw;
+  color: cyan;
+  flex: 1;
+}
+
+.c-not_found button {
+  width: 7vw;
+  height: 7vw;
+  border-radius: 50vw;
+  background: #424148;
+}
+
+.c-not_found button:active {
+  transform: scale(.95);
+  background: #525158;
+}
+
+.c-not_found button::before {
+  pointer-events: none;
+  content: "";
+  width: 1.8vw;
+  height: 2vw;
+  background: none;
+  border-right: 0.6vw solid cyan;
+  border-bottom: 0.6vw solid cyan;
+  transform: rotate(45deg);
+  margin-bottom: 12%;
+}
+
+.c-not_found button:active::before {
+  border-right: 0.6vw solid #efefff;
+  border-bottom: 0.6vw solid #efefff;
 }
 
 /* CARDS */
@@ -260,7 +316,7 @@
 }
 
 .c-musics__card__name span {
-  font-size: .6rem;
+  font-size: .5rem;
   color: #929198;
   padding: 1vw;
   border-radius: 50vw;
@@ -269,32 +325,25 @@
   background: #525158;
 }
 
+
+.c-musics__card.active .c-musics__card__icon {
+  /background: var(--color-details);
+  /justify-content: center;
+  /box-shadow: 0px .5px 2px 2px #525158;
+  /padding: 1.5vw;
+}
+
 .c-musics__card.active .c-musics__card__icon img {
-  height: 100%;
-  width: 100%;
+  /height: 100%;
+  /width: 100%;
 }
 
 .c-musics__card.playing .c-musics__card__icon img {
   animation: music-playing .2s ease-in-out alternate infinite;
 }
 
-.c-musics__card.active .c-musics__card__icon span {
-  display: none;
-}
-
-.c-musics__card.active .c-musics__card__icon {
-  /background: var(--color-details);
-  justify-content: center;
-  box-shadow: 0px .5px 2px 2px #525158;
-  padding: 1.5vw;
-}
-
 .c-musics__card.active .c-musics__card__name p {
   color: var(--color-details);
-}
-
-.c-musics__card.active .c-musics__card__name span {
-  display: none;
 }
 
 @keyframes music-playing {
@@ -369,7 +418,7 @@
 }
 
 .c-musics__card.active .c-musics__card__points span {
-  background: #4a4a50;
+  /background: #4a4a50;
 }
 
 .c-musics__card__points span::after,

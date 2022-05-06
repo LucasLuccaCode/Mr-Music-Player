@@ -2,7 +2,14 @@
 const formatting = {
   functions(){
     this.recreateIds = function(array){
-      return array.map( (item, index) =>  ({ ...item, id: index }) )
+      let isChanged = false
+      return array.map( (item, index) => {
+        if(this.currentPlaying == item.id && !isChanged){ 
+          isChanged = true
+          this.currentPlaying = audiosData.lastPlay = index
+        }
+       return { ...item, id: index }
+      })
     }
     this.orderRanking = function(array){
       return [...array].sort( (a,b) => b.nReproduced - a.nReproduced)
@@ -30,6 +37,12 @@ const formatting = {
     }
     this.orderDate = function(array){
       return [...array].sort( (a, b) => a.date+a.hour < b.date+b.hour ? +1 : -1 )
+    }
+    this.formatMusicPath = function(value){
+      value = value.split("")
+      const lastCaracter = value.pop()
+      if(lastCaracter != "/") value.push(lastCaracter)
+      return value.join("")
     }
   }
 }

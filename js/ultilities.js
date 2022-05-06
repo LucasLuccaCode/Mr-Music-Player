@@ -30,13 +30,16 @@ const ultilities = {
       const directory = `${player.musicsPath}`
       const code = `#!/bin/bash;
       ls "${directory}" | wc -l`
-      return await tasker.actionsShell(code)
+      return this.path != "." ? await tasker.actionsShell(code) : audiosData.musics.length
     }
     this.listMusics = async function() {
+      if(this.path == '.') return audiosData.musics = [...musicsDefault]
       const directory = `${player.musicsPath}`
       const code = `#!/bin/bash;
       ls -atxo "${directory}" | awk 'NR > 1 { print NR-2"/"$0 }'`
+      
       let listMusics = await tasker.actionsShell(code)
+      
       const regex = /([0-9]+)\/.+(\d{4}\-\d{2}\-\d{2})\s(\d{1,2}\:\d{2})\s(.+)/
       const re = new RegExp(regex, 'g')
       listMusics = listMusics.replace(re, '{ "id": $1, "name": "$4", "duration": 0, "hour": "$3", "date": "$2", "nReproduced": 0 },').replace(/.$/,"")
@@ -105,17 +108,18 @@ const ultilities = {
     }
     this.showAlertProgress = function(msg){
       this.c_player.classList.add("blur")
-      document.querySelector("[data-alert_progress] h3").textContent = msg
+      document.querySelector("[data-alert_progress] h3").innerHTML = msg
       document.querySelector("[data-alert_progress] div > div").style.width = "0%"
       document.querySelector("[data-alert_progress] p").textContent = "..."
       this.alertProgress.classList.add("active")
     }
     this.showConfirmationAlert = function(msg){
+      this.alertFunc = {...alertFuncDefault}
       this.c_player.classList.add("blur")
-      document.querySelector("[data-confirmation_alert] h3").textContent = msg
+      document.querySelector("[data-confirmation_alert] h3").innerHTML = msg
       this.confirmationAlert.classList.add("active")
     }
-    this.calculateMusicsTimes = () => {
+    this.setMusicsDuration = () => {
       this.showAlertProgress("Carregando durações das musicas")
       musicsTotal = audiosData.musics.length
       totalDurations = conputed = 0
@@ -132,7 +136,6 @@ const ultilities = {
             audiosData.musics[id].duration = parseInt(this.duration)
             document.querySelector(`[data-card="${id}"] .c-musics__card__icon span`).textContent = duration
           }
-         // console.log(conputed+" / "+audiosData.musics[conputed].name)
           player.updateAlertProgress(conputed,musicsTotal)
           if(conputed >= musicsTotal) player.allDurationsLoaded(totalDurations)
         }
@@ -167,35 +170,32 @@ const ultilities = {
       audiosData.musics = audiosData.musics.filter( 
         ({id}) =>  !ids.includes(String(id)))
     }
-    this.startDeleteMusics = function(selecteds){
+    this.startDeleteMusics = async function(selecteds){
       deletedFiles = 0
       let lastID = false
       
       this.showAlertProgress(`Excluindo ${selecteds.length} musicas`)
-      setTimeout( ()=> {
-        const ids = selecteds.map( el => {
-          const id = el.parentNode.parentNode.getAttribute("data-card")
-          if(id == audiosData.lastPlay) lastID = true
-          return id
-        })
-        this.removeFiles(ids)
-        this.removeMusics(ids)
-        this.updateTotalDurations()
-        audiosData.musics = this.recreateIds(audiosData.musics)
-        audiosData.totalMusics = audiosData.musics.length
-        this.updateTotalMusics()
-        this.updateDataCardsIds()
-        this.saveData(audiosData)
-        setTimeout( ()=> {
-          this.alertProgress.classList.remove("active")
-        }, 500)
-        if(lastID){ 
-          this.currentPlaying = 0
-          this.update()
-        }
-        this.alertFunc = false
-        console.log(this)
-      }, 1000)
+      await this.sleep(1000)
+      const ids = selecteds.map( el => {
+        const id = el.parentNode.parentNode.getAttribute("data-card")
+        if(id == audiosData.lastPlay) lastID = true
+        return id
+      })
+      this.removeFiles(ids)
+      this.removeMusics(ids)
+      this.updateTotalDurations()
+      audiosData.musics = this.recreateIds(audiosData.musics)
+      audiosData.totalMusics = audiosData.musics.length
+      this.updateTotalMusics()
+      this.updateDataCardsIds()
+      this.saveData(audiosData)
+      await this.sleep(500)
+      this.alertProgress.classList.remove("active")
+      if(lastID){ 
+        this.currentPlaying = 0
+        this.update()
+      }
+      this.alertFunc = {...alertFuncDefault}
     }
   }
 }

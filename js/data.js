@@ -1,5 +1,10 @@
-let audiosData = {
-  musics: [{
+
+const alertFuncDefault = {
+  not: ()=>{},
+  yes: ()=>{}
+}
+
+const musicsDefault = [{
     id: 0,
     name: "ESSE É LADRÃO - FUNK DO TIK TOK - MC Topre - DJ Brunin Da NT(MP3_160K).mp3",
     duration: 0,
@@ -118,7 +123,10 @@ let audiosData = {
     hour: "17:34",
     date: "2020-09-14",
     nReproduced: 0
-  }],
+  }]
+
+let audiosData = {
+  musics: [...musicsDefault],
   totalDurations: 0,
   totalPlayed: 0,
   totalMusics: 0,

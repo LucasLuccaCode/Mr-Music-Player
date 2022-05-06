@@ -9,9 +9,7 @@ const player = {
   activeCard: false,
   currentAudio: {},
   musicsPlayed: [],
-  alertFunc: () => {
-    alert("yes")
-  },
+  alertFunc: {...alertFuncDefault},
   
   setContexts(){
     formatting.functions.call(this)
@@ -23,54 +21,47 @@ const player = {
     selectorsAndEvents.events.call(this)
     //this.activateDevTools()
   },
-  async start() {
+  async start(update) {
     //this.removeStorage()
     await this.renderLoading()
     let hasStorageData = await this.checkStorageData()
-    console.log(`[hasStorageData] => ${hasStorageData}`)
     if(hasStorageData) this.assignSaveData()
-    console.log(`[this.path] => ${this.path}`)
-    if(this.path != "."){ 
-      let numberMusics = await this.getNumberMusics()
-      if(!hasStorageData || numberMusics != audiosData.totalMusics || !audiosData.totalMusics){
-        let isConfirmed
-        if(hasStorageData && audiosData.totalMusics){
-          isConfirmed = confirm("Lista de musicas desatualizada, deseja atualizar agora?")
-          if(isConfirmed){ 
-            audiosData = { ...audiosDataDefault }
-            this.musics.innerHTML = ""
-            hasStorageData = false
-          }
-        }
-        if(isConfirmed || isConfirmed == undefined){
-          this.totalDurationsElem.textContent = "..."
-          await this.sleep(10)
+    const numberMusics = await this.getNumberMusics()
+
+    if(numberMusics != audiosData.totalMusics || update || numberMusics == 0){
+      const msg = "Lista de musicas desatualizada.<br>Deseja atualizar agora?"
+      if(!update && numberMusics != 0) this.showConfirmationAlert(msg)
+      this.alertFunc = {
+        not: async () => {
+          this.updateTotalDurations()
+          this.updateTotalMusics()
+          this.renderCardsMusics(audiosData.musics)
+          this.update()
+        },
+        yes: async () => {
+          audiosData = { ...audiosDataDefault }
           await this.listMusics()
-          if(!audiosData.musics.length){
-            const msg = "<p class='infor'>Não foram encontradas musicas na pasta indicada</p>"
-            this.musics.innerHTML = msg
-            //audiosData.totalMusics = audiosData.musics.length
-            //this.saveData(audiosData)
-            return
-          }
+          if(!audiosData.musics.length) return this.renderSongsNotFound()
+          audiosData.totalMusics = audiosData.musics.length
+          this.currentPlaying = audiosData.lastPlay
+          this.renderCardsMusics(audiosData.musics)
+          this.setMusicsDuration()
+          this.updateTotalMusics()
+          this.update()
         }
       }
+      if(update || numberMusics == 0) this.alertFunc.yes()
+      return
     }
-    if(!hasStorageData) audiosData.totalMusics = audiosData.musics.length
-    console.log(`[audiosData.totalMusics] => ${audiosData.totalMusics}`)
     this.currentPlaying = audiosData.lastPlay
-    console.log(`[this.currentPlaying] => ${this.currentPlaying}`)
-    
-    this.renderCardsMusics(audiosData.musics)
     if(audiosData.totalDurations) this.updateTotalDurations()
-    console.log(`[audiosData.totalDurations] => ${audiosData.totalDurations}`)
     if(audiosData.totalMusics) this.updateTotalMusics()
+    this.renderCardsMusics(audiosData.musics)
     if(!hasStorageData) this.calculateMusicsTimes()
     if(audiosData.lastPlay !== false) this.update()
   },
   update() {
     if(!audiosData.musics.length) return
-    console.log(`[--CurrentPlaying] => ${this.currentPlaying}`)
     if(this.statusRandom) this.randomizeMusics()
     this.activateCard()
     this.currentAudio = audiosData.musics[this.currentPlaying]
@@ -114,7 +105,7 @@ const player = {
     this.musicsPlayed.splice(numberRandom, 1)
     
     if(!this.musicsPlayed.length){ 
-      alert("Todas musicas foram tocadas")
+      this.createMsg("Todas as musicas foram tocadas aleatoriamente. Reiniciando lista...", true)
       this.musicsPlayed = audiosData.musics.map( ({id}) => id )
     }
   },
