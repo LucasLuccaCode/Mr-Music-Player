@@ -44,8 +44,9 @@ const player = {
           if(!audiosData.musics.length) return this.renderSongsNotFound()
           audiosData.totalMusics = audiosData.musics.length
           this.currentPlaying = audiosData.lastPlay
-          this.renderCardsMusics(audiosData.musics)
-          this.setMusicsDuration()
+          const hasLimitMusics = audiosData.musics.length <= 200
+          this.renderCardsMusics(audiosData.musics, false, hasLimitMusics)
+          if(hasLimitMusics) this.setMusicsDuration()
           this.updateTotalMusics()
           this.update()
         }
@@ -55,9 +56,9 @@ const player = {
     }
     this.currentPlaying = audiosData.lastPlay
     if(audiosData.totalDurations) this.updateTotalDurations()
-    if(audiosData.totalMusics) this.updateTotalMusics()
+    this.updateTotalMusics()
     this.renderCardsMusics(audiosData.musics)
-    if(!hasStorageData) this.calculateMusicsTimes()
+    this.actionsMoreOptions()
     if(audiosData.lastPlay !== false) this.update()
   },
   update() {

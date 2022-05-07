@@ -56,7 +56,7 @@ const updateRender = {
         this.start(true)
       }
     }
-    this.renderCardsMusics = async function(data, isSearch) {
+    this.renderCardsMusics = async function(data, isSearch, hasLimitMusics) {
       const htmlCards = data.map( 
         ({id, name, duration, date, nReproduced }) => {
        const isActiveCard = audiosData.lastPlay === id
@@ -66,9 +66,9 @@ const updateRender = {
             <label>
               <input data-card_select type="checkbox" class="checkbox" />
             </label>
-            <div class="c-musics__card__icon">
+            <div class="c-musics__card__icon ${ !audiosData.totalDurations && !hasLimitMusics ? 'not-found' : '' }">
               <img src="${this.path}/src/icons/${ isActiveCard ? 'music-playing.webp' : 'music-black.png' }" loading="lazy" />
-              <span>${ this.setDuration(duration) || "00:00" }</span>
+              <span>${ duration ? this.setDuration(duration) : "..." }</span>
             </div>
             <div class="c-musics__card__name">
               <p class="nowrap">${ this.splitName(name) }</p>

@@ -4,7 +4,7 @@
 		<cdate>1640374185938</cdate>
 		<name>Mr Music Player</name>
 		<scenes>MRMP - Player</scenes>
-		<tids>42,681,5</tids>
+		<tids>681,42,5</tids>
 		<ProfileVariable sr="pv0">
 			<clearout>false</clearout>
 			<exportval>false</exportval>
@@ -12,7 +12,7 @@
 			<pvci>false</pvci>
 			<pvd></pvd>
 			<pvdn></pvdn>
-			<pvid>98</pvid>
+			<pvid>97</pvid>
 			<pvit>pj</pvit>
 			<pvn>%musics_path</pvn>
 			<pvt>t</pvt>
@@ -22,7 +22,7 @@
 	</Project>
 	<Scene sr="sceneMRMP - Player">
 		<cdate>1640650492898</cdate>
-		<edate>1651806085908</edate>
+		<edate>1651920634821</edate>
 		<heightLand>-1</heightLand>
 		<heightPort>1920</heightPort>
 		<nme>MRMP - Player</nme>
@@ -172,28 +172,28 @@
       &lt;div class="c-main__slider"&gt;&lt;span&gt;&lt;/span&gt;&lt;/div&gt;
       &lt;div class="c-order__options"&gt;
         &lt;label&gt;
-          &lt;p&gt; Mais tocadas&lt;/p&gt;
           &lt;input data-order_option="ranking" class="c--flex" type="radio" value="add" name="order"/&gt;
+          &lt;p&gt; Mais tocadas&lt;/p&gt;
         &lt;/label&gt;
         &lt;label &gt;
-          &lt;p&gt; Duração (maior) &lt;/p&gt;
           &lt;input data-order_option="longer_duration" class="c--flex" type="radio" name="order"/&gt;
+          &lt;p&gt; Duração (maior) &lt;/p&gt;
         &lt;/label&gt;
         &lt;label &gt;
-          &lt;p&gt; Duração (menor) &lt;/p&gt;
           &lt;input data-order_option="shorter_duration" class="c--flex" type="radio" name="order"/&gt;
+          &lt;p&gt; Duração (menor) &lt;/p&gt;
         &lt;/label&gt;
         &lt;label&gt;
-          &lt;p&gt; Nome (A-Z) &lt;/p&gt;
           &lt;input data-order_option="nameC" class="c--flex" type="radio" name="order"/&gt;
+          &lt;p&gt; Nome (A-Z) &lt;/p&gt;
         &lt;/label&gt;
         &lt;label&gt;
-          &lt;p&gt; Nome (Z-A) &lt;/p&gt;
           &lt;input data-order_option="nameD" class="c--flex" type="radio" name="order"/&gt;
+          &lt;p&gt; Nome (Z-A) &lt;/p&gt;
         &lt;/label&gt;
         &lt;label&gt;
-          &lt;p&gt; Data &lt;/p&gt;
           &lt;input data-order_option="date"  class="c--flex" type="radio" name="order"/&gt;
+          &lt;p&gt; Data &lt;/p&gt;
         &lt;/label&gt;
       &lt;/div&gt;
     &lt;/section&gt;
@@ -364,7 +364,7 @@
 	</Task>
 	<Task sr="task5">
 		<cdate>1640374222534</cdate>
-		<edate>1651805845521</edate>
+		<edate>1651924678405</edate>
 		<id>5</id>
 		<nme>MRMP 0 - BEGIN / INICIO</nme>
 		<pri>100</pri>

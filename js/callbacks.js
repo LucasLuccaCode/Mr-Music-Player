@@ -118,9 +118,9 @@ const callbacks = {
       }
     }
     this.actionsMoreOptions = function(){
-      const card = document.querySelector(`.c-player__musics [data-card="${this.currentPlaying}"]`)
-      const to = card.offsetTop - 210
-      this.pageMusics.scroll(0, to)
+      const card = document.querySelector(`[data-card="${this.currentPlaying}"]`)
+      const to = card.offsetTop
+      this.musics.scroll(0, to)
     }
     this.actionsControl = ( { target: el }) => {
       const btn = el.getAttribute("data-controls_card")
@@ -239,7 +239,11 @@ const callbacks = {
       const { key, value } = this.getDataSetAttributes(el)
       if(key != "card") return
       window.navigator.vibrate(15)
-      this.c_player.classList.add("select")
+      
+      if(!this.c_player.className.includes("select")){
+        this.c_player.classList.add("select")
+        this.c_player.classList.add("main")
+      }
       const checkbox = el.querySelector("[data-card_select]")
       checkbox.checked = !checkbox.checked
       this.updateTotalMusics(`${ this.getSelectedsCheckbox().length } / ${ audiosData.totalMusics }`)
@@ -251,6 +255,7 @@ const callbacks = {
         options_select: () => {
           if (el.checked) {
             this.c_player.classList.add("select")
+            this.c_player.classList.add("main")
             setTimeout(() => {
               const selecteds = [...document.querySelectorAll("[data-card_select]")];
               selecteds.forEach(el => el.checked = true)

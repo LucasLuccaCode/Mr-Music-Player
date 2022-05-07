@@ -16,8 +16,7 @@
   z-index: 101;
 }
 
-.c-player.main .c-main,
-.c-player.select .c-main{
+.c-player.main .c-main {
   position: absolute;
   bottom: 0;
   height: 95%;
@@ -27,6 +26,7 @@
   position: relative;
   overflow-y: auto;
   flex: 1;
+  scroll-behavior: smooth;
 }
 
 /* SLIDER */
@@ -73,9 +73,10 @@
 
 .c-main__options p {
   pointer-events: none;
-  font-size: .7rem;
+  font-size: .6rem;
   font-weight: 350;
   margin-left: .6vw;
+  text-transform: uppercase;
   color: #e4e4ea;
 }
 
@@ -276,8 +277,18 @@
   border-radius: .8vw;
 }
 
+.c-musics__card__icon.not-found {
+  width: calc(1rem * 2.30);
+  height: calc(1rem * 2.30);
+  justify-content: center;
+}
+
 .c-musics__card__icon img {
-  width: 50%;
+  height: 50%;
+}
+
+.c-musics__card__icon.not-found img {
+  height: 70%;
 }
 
 .c-musics__card__icon span {
@@ -292,6 +303,10 @@
   /margin-top: .3vh;
   background: #525158;
   /background-image: linear-gradient( to right, #00b1ff, var(--color-details));
+}
+
+.c-musics__card__icon.not-found span {
+  display: none;
 }
 
 .c-musics__card__name {

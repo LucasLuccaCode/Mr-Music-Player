@@ -42,7 +42,7 @@ const ultilities = {
       
       const regex = /([0-9]+)\/.+(\d{4}\-\d{2}\-\d{2})\s(\d{1,2}\:\d{2})\s(.+)/
       const re = new RegExp(regex, 'g')
-      listMusics = listMusics.replace(re, '{ "id": $1, "name": "$4", "duration": 0, "hour": "$3", "date": "$2", "nReproduced": 0 },').replace(/.$/,"")
+      listMusics = listMusics.replace(re, '{ "id": $1, "name": "$4", "duration": false, "hour": "$3", "date": "$2", "nReproduced": 0 },').replace(/.$/,"")
       const json = `[${listMusics}]`
       audiosData["musics"] = JSON.parse(json)
     }
